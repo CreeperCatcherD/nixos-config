@@ -9,6 +9,8 @@
     #chromium
     firefox
     discord
+    rofi-wayland  #hyprland
+    wofi          #hyprland
     gparted
     obsidian
 
@@ -49,6 +51,25 @@
     screenkey
     mako
     gromit-mpx
+
+    # Wayland stuff
+    xwayland
+    wl-clipboard
+    cliphist
+
+    # WMs and stuff
+    herbstluftwm
+    hyprland
+    seatd
+    xdg-desktop-portal-hyprland
+    polybar
+    dunst
+    libnotify # for dunst
+    swww # Wallpaper
+    (pkgs.waybar.overrideAttrs (oldAttrs: {
+        mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
+      })
+    ) 
 
     # Sound
     pipewire

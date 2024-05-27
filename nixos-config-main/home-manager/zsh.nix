@@ -31,7 +31,7 @@
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" "sudo" ];
-      theme = "blinks"; # blinks is also really nice agnoster
+      theme = "agnoster"; # blinks is also really nice agnoster
     };
   };
 }

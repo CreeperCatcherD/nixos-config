@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Switching NixOS to .#nixos flake"
+echo "Switching home-manager to .#kleind flake"
 
 # Run nixos-rebuild switch with --flake option, pipe output to tee
 home-manager switch --flake .#kleind | tee >(grep -E '\[.+\]|^building ') &
@@ -12,7 +12,7 @@ wait "$background_pid"
 
 # Check the exit code
 if [[ $? -eq 0 ]]; then
-  echo "NixOS rebuild successful."
+  echo "home-manager rebuild successful."
 else
   echo "Rebuild failed. See detailed errors in the terminal output."
 fi

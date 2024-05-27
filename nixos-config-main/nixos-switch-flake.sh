@@ -2,7 +2,7 @@
 echo "Switching NixOS to .#nixos flake"
 
 # Run nixos-rebuild switch with --flake option, pipe output to tee
-sudo nixos-rebuild switch --flake .#nixos | tee >(grep -E '\[.+\]|^building ') &
+sudo nixos-rebuild switch --flake .#nixos --no-warnings | tee >(grep -E '\[.+\]|^building ') &
 
 # Capture the background process ID
 background_pid=$!

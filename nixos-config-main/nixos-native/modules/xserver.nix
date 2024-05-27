@@ -3,8 +3,8 @@
       enable = true;
 
       # Enable the KDE Plasma Desktop Environment.
-      displayManager.sddm.enable = true;
-      desktopManager.plasma5.enable = true;
+      #displayManager.sddm.enable = true;
+      #desktopManager.plasma5.enable = true;
 
       #windowManager.herbstluftwm.enable = true;
 
