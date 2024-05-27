@@ -1,9 +1,8 @@
 #!/bin/bash
 echo "Switching NixOS to .#nixos flake"
 
-# Run nixos-rebuild switch in the background with --flake option
-# Redirect standard error (stderr) directly to the terminal
-nixos-rebuild switch --flake .#nixos 2>&1 &
+# Run nixos-rebuild switch with --flake option, pipe output to tee
+sudo nixos-rebuild switch --flake .#nixos | tee >(grep -E '\[.+\]|^building ') &
 
 # Capture the background process ID
 background_pid=$!
