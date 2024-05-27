@@ -1,5 +1,6 @@
 {
   imports = [
+    ./bluetooth.nix
     ./bootloader.nix
     ./sound.nix
     ./zram.nix
@@ -7,10 +8,9 @@
     ./user.nix
     ./xserver.nix
     ./nm.nix
+    ./trim.nix
     ./virtmanager.nix
     ./hyprland.nix
-    ./trim.nix
-    ./bluetooth.nix
     ./nixvim/nixvim.nix
   ];
 }

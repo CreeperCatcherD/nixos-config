@@ -6,7 +6,7 @@
 
   environment.systemPackages = with pkgs; [
     # Desktop apps
-    chromium
+    #chromium
     firefox
     discord
     gparted
@@ -18,14 +18,29 @@
     #(python3.withPackages (ps: with ps; [ requests ]))
 
     # CLI utils
-    wget
-    git
-    nix-index
-    unzip
+    # Most of these were copied from ampere's config
+    brightnessctl
+    cava
+    file
+    fastfetch
     ffmpeg
-    zip
+    git
+    htop
+    light
+    lazygit
+    lux
+    mediainfo
+    neofetch
     ntfs3g
     openssl
+    ranger
+    scrot
+    tree
+    unzip
+    wget
+    yt-dlp
+    zram-generator
+    bluez-tools
 
     # GUI utils
     feh
@@ -58,7 +73,14 @@
   ];
 
   fonts.packages = with pkgs; [
-
+    jetbrains-mono
+    noto-fonts
+    noto-fonts-emoji
+    twemoji-color-font
+    font-awesome
+    powerline-fonts
+    powerline-symbols
+    (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
   ];
   
 }

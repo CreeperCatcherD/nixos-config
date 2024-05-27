@@ -1,5 +1,5 @@
 { pkgs, ... }: {
-  programs.zsh.enable = true;
+  programs.zsh.enable = true; # Redundant zsh.nix
 
   users = {
     defaultUserShell = pkgs.zsh;
@@ -13,7 +13,6 @@
   };
 
   # Enable automatic login for the user.
-  #services.getty.autologinUser = "amper";
-  services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "kleind";
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "kleind";
 }

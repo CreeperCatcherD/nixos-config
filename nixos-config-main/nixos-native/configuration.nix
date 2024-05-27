@@ -52,13 +52,6 @@
   #   enableSSHSupport = true;
   # };
 
-  # List services that you want to enable:
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
-  };  
-
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
