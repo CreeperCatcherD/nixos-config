@@ -8,7 +8,7 @@
       isNormalUser = true;
       description = "Klein Davis";
       extraGroups = [ "networkmanager" "wheel" ];
-      packages = with pkgs; [steam];
+      packages = with pkgs; [];
     };
   };
 
