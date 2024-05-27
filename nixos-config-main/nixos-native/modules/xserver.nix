@@ -6,7 +6,7 @@
       #displayManager.sddm.enable = true;
       #desktopManager.plasma5.enable = true;
 
-      #windowManager.herbstluftwm.enable = true;
+      windowManager.herbstluftwm.enable = true;
 
       # displayManager = {
       #   autoLogin.enable = true;

@@ -1,4 +1,5 @@
 bash "commit.sh"
+wait
 
 cd "./nixos-config-main"
 
