@@ -1,20 +1,13 @@
 #!/bin/bash
-echo "Switching nixos to .\#nixos flake"
+echo "Switching NixOS to .#nixos flake"
 
 # Run nixos-rebuild switch in the background with --flake option and capture filtered output
-output=$(nixos-rebuild switch --flake .#nixos 2>&1 | grep -E '\[.+\]|^building ') &
+output=$(sudo nixos-rebuild switch --flake .#nixos 2>&1 | grep -E '\[.+\]|^building ') &
 
 # Capture the background process ID
 background_pid=$!
 
-# Continuously check the background process status (optional)
-while kill -0 "$background_pid" 2>/dev/null; do
-  # Optional visual cue (can be commented out)
-  echo -n "."
-  sleep 1
-done
-
-# Wait for the background process to finish
+# Wait for the background process to finish (ensures rebuild completes)
 wait "$background_pid"
 
 # Check the exit code
@@ -28,4 +21,3 @@ fi
 
 # Remove temporary captured output (optional)
 # rm /dev/stderr
-
