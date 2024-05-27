@@ -6,42 +6,53 @@
 
   environment.systemPackages = with pkgs; [
     # Desktop apps
-    #chromium
-    firefox
+    chromium
+    telegram-desktop
+    alacritty
+    obs-studio
+    rofi
+    wofi
+    mpv
+    kdenlive
     discord
-    rofi-wayland  #hyprland
-    wofi          #hyprland
     gparted
     obsidian
+    zoom-us
+    pcmanfm-qt
 
     # Coding stuff
-    vscode
-    #python
-    #(python3.withPackages (ps: with ps; [ requests ]))
+    gnumake
+    gcc
+    nodejs
+    python
+    (python3.withPackages (ps: with ps; [ requests ]))
 
     # CLI utils
-    # Most of these were copied from ampere's config
-    brightnessctl
-    cava
+    neofetch
     file
-    fastfetch
-    ffmpeg
+    tree
+    wget
     git
+    fastfetch
     htop
+    nix-index
+    unzip
+    scrot
+    ffmpeg
     light
-    lazygit
     lux
     mediainfo
-    neofetch
-    ntfs3g
-    openssl
     ranger
-    scrot
-    tree
-    unzip
-    wget
-    yt-dlp
     zram-generator
+    cava
+    zip
+    ntfs3g
+    yt-dlp
+    brightnessctl
+    swww
+    openssl
+    lazygit
+    bluez
     bluez-tools
 
     # GUI utils
@@ -51,6 +62,11 @@
     screenkey
     mako
     gromit-mpx
+
+    # Xorg stuff
+    #xterm
+    #xclip
+    #xorg.xbacklight
 
     # Wayland stuff
     xwayland
@@ -63,13 +79,7 @@
     seatd
     xdg-desktop-portal-hyprland
     polybar
-    dunst
-    libnotify # for dunst
-    swww # Wallpaper
-    (pkgs.waybar.overrideAttrs (oldAttrs: {
-        mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
-      })
-    ) 
+    waybar
 
     # Sound
     pipewire
@@ -77,9 +87,9 @@
     pamixer
 
     # GPU stuff 
-
-    # Gaming
-    steam
+    amdvlk
+    rocm-opencl-icd
+    glaxnimate
 
     # Screenshotting
     grim
@@ -91,6 +101,9 @@
     # Other
     home-manager
     spice-vdagent
+    libsForQt5.qtstyleplugin-kvantum
+    libsForQt5.qt5ct
+    papirus-nord
   ];
 
   fonts.packages = with pkgs; [
@@ -103,5 +116,4 @@
     powerline-symbols
     (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
   ];
-  
 }
