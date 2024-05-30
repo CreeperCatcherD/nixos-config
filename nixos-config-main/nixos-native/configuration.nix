@@ -14,7 +14,7 @@
     ];
 
   disabledModules = [
-    ./modules/xserver.nix
+    #./modules/xserver.nix
   ];
 
   networking.hostName = "nixos"; # Define your hostname.
