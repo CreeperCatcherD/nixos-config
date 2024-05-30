@@ -11,6 +11,6 @@
     ./trim.nix
     ./steam.nix
     ./virtmanager.nix
-    ./hyprland.nix
+    #./hyprland.nix
   ];
 }

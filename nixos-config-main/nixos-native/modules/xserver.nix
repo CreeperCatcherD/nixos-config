@@ -6,7 +6,7 @@
       displayManager.sddm.enable = true;
       desktopManager.plasma5.enable = true;
 
-      windowManager.herbstluftwm.enable = true;
+      #windowManager.herbstluftwm.enable = true;
 
       # displayManager = {
       #   autoLogin.enable = true;
@@ -23,8 +23,8 @@
         touchpad.accelProfile = "flat";
       };
 
-      videoDrivers = [ "nvidia" ];
-      deviceSection = ''Option "TearFree" "True"'';
+      #videoDrivers = [ "nvidia" ];
+      #deviceSection = ''Option "TearFree" "True"'';
       #displayManager.gdm.enable = true;
       #desktopManager.gnome.enable = true;
     };
