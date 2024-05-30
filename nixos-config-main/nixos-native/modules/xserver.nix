@@ -10,7 +10,7 @@
       #   autoLogin.user = "amper";
       #   lightdm.enable = true;
       # };
-    }
+    };
 
       layout = "us";
       xkbVariant = "";
