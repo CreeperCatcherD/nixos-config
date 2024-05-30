@@ -1,13 +1,16 @@
 {
-  services.xserver = {
+  services = {
+  
+    xserver = {
       enable = true;
-      #windowManager.herbstluftwm.enable = true;
+      windowManager.herbstluftwm.enable = true;
 
       # displayManager = {
       #   autoLogin.enable = true;
       #   autoLogin.user = "amper";
       #   lightdm.enable = true;
       # };
+    }
 
       layout = "us";
       xkbVariant = "";
@@ -18,10 +21,8 @@
         touchpad.accelProfile = "flat";
       };
 
-      #videoDrivers = [ "nvidia" ];
-      #deviceSection = ''Option "TearFree" "True"'';
-      #displayManager.gdm.enable = true;
-      #desktopManager.gnome.enable = true;
+      videoDrivers = [ "nvidia" ];
+      deviceSection = ''Option "TearFree" "True"'';
     };
 
   # Enable the KDE Plasma Desktop Environment.
