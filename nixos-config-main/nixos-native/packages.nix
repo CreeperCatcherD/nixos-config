@@ -26,9 +26,12 @@
     gcc
     nodejs
     python
+    vscode
     (python3.withPackages (ps: with ps; [ requests ]))
 
     # CLI utils
+    cmatrix
+    tmux
     neofetch
     file
     tree
@@ -55,6 +58,8 @@
     lazygit
     bluez
     bluez-tools
+    neovim
+    openrgb-with-all-plugins
 
     # GUI utils
     feh

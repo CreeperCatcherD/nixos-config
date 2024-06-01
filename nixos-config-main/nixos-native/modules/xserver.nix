@@ -1,6 +1,4 @@
 {
-  imports = [ ./../../options.nix ];
-
   services = {
   
     xserver = {
@@ -30,15 +28,11 @@
 
 
   # Enable the KDE Plasma Desktop Environment
-  if options.kde_plasma_de then {
-    services.displayManager.sddm.enable = true;
-    services.desktopManager.plasma5.enable = true;
-  }
+  services.displayManager.sddm.enable = true;
+  services.xserver.desktopManager.plasma5.enable = true;
 
 
   # Enable the Hyperland Desktop Environment
-  if options.hyprland_de then {
-    services.displayManager.sddm.enable = true;
-    services.displayManager.sddm.wayland.enable = true;
-  }
+  #services.displayManager.sddm.enable = true;
+  #services.displayManager.sddm.wayland.enable = true;
 }
