@@ -12,5 +12,6 @@
     ./steam.nix
     ./virtmanager.nix
     #./hyprland.nix
+    ./samba.nix
   ];
 }

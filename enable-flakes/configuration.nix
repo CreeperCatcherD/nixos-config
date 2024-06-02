@@ -86,6 +86,7 @@
     packages = with pkgs; [
       firefox
       kate
+      git
     #  thunderbird
     ];
   };

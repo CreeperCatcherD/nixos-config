@@ -30,6 +30,9 @@
     (python3.withPackages (ps: with ps; [ requests ]))
 
     # CLI utils
+    fzf
+    atuin
+    btop
     cmatrix
     tmux
     neofetch
@@ -58,7 +61,7 @@
     lazygit
     bluez
     bluez-tools
-    neovim
+    #neovim
     openrgb-with-all-plugins
 
     # GUI utils
