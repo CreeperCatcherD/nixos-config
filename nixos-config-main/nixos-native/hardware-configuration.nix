@@ -27,9 +27,10 @@
     [ { device = "/dev/disk/by-uuid/a803ff3f-a45d-47f4-a35e-5826bdc1d54f"; }
     ];
   
-  fileSystems."/home/kleind/Documents/dol/" = {
-    device = "//backupbeast/Read-Only";
+  fileSystems."/mnt/network_documents" = {
     fsType = "cifs";
+    device = "//backupbeast/Read-Only";
+    #options = [ "username=your_username", "password=your_password" ];
   };
 
 
