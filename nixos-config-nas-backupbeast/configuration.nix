@@ -11,6 +11,19 @@
       #./samba.nix
     ];
 
+
+  fileSystems."/share/main/Read-Only/Audio" = { 
+    device = "/share/main/Audio";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
+  fileSystems."/share/main/Read-Only/ROMs" = { 
+    device = "/share/main/ROMs";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -82,11 +95,21 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
 
   users.groups.smbgroup = {};
+  users.groups.filegroup = {};
 
   users.users.backupbeast = {
     isNormalUser = true;
     description = "Backup Beast";
     extraGroups = [ "networkmanager" "wheel" ];
+    packages = with pkgs; [
+      
+    ];
+  };
+
+  users.users.kleindavis = {
+    isSystemUser = true;
+    description = "Fileshare User";
+    group = "filegroup";
     packages = with pkgs; [
       
     ];
@@ -129,6 +152,8 @@
     pipewire
     pulseaudio
     pamixer
+    rustdesk
+    opera
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -178,7 +203,7 @@
       name resolve order = bcast host
     '';
     shares = {
-      public = {
+      "Public" = {
         path = "/share/public";
         browseable = "yes";
         "read only" = "no";
@@ -188,11 +213,21 @@
         "force user" = "smbuser";
         "force group" = "smbgroup";
       };
-      private = {
-        path = "/share/private";
+      "Main" = {
+        path = "/share/main";
         browseable = "yes";
         "read only" = "no";
         "guest ok" = "no";
+        "create mask" = "0664";
+        "directory mask" = "0775";
+        "force user" = "smbuser";
+        "force group" = "smbgroup";
+      };
+      "Read-Only" = {
+        path = "/share/main/Read-Only";
+        browseable = "yes";
+        "read only" = "yes";
+        "guest ok" = "yes";
         "create mask" = "0664";
         "directory mask" = "0775";
         "force user" = "smbuser";

@@ -10,17 +10,17 @@ while [ $selection -ne 0 ]; do
   read -p "Selection: " selection
   if [ $selection -eq 1 ]; then
     read -p "Username: " name
-    sudo smbpasswd -a name
+    sudo smbpasswd -a $name
   fi
 
   if [ $selection -eq 2 ]; then
     read -p "Username: " name
-    sudo smbpasswd name
+    sudo smbpasswd $name
   fi
 
   if [ $selection -eq 3 ]; then
     read -p "Username: " name
-    sudo smbpasswd -x name
+    sudo smbpasswd -x $name
   fi
 
 
