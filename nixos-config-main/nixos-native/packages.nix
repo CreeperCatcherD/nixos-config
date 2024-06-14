@@ -7,7 +7,6 @@
   environment.systemPackages = with pkgs; [
     # Desktop apps
     alacritty
-    clementine
     discord
     dolphin-emu
     firefox
@@ -15,8 +14,8 @@
     kdenlive
     konsole
     mpv
-    obs-studio
     obsidian
+    obs-studio
     pcmanfm-qt
     rofi
     telegram-desktop
@@ -24,25 +23,23 @@
     zoom-us
 
     # Coding stuff
-    (python3.withPackages (ps: with ps; [ requests ]))
     gcc
     gnumake
     nodejs
     python
+    python3.withPackages (ps: with ps; [ requests ])
     vscode
 
     # CLI utils
     atuin
-    bluez
-    bluez-tools
-    brightnessctl
     btop
+    brightnessctl
     cava
     cmatrix
     fastfetch
+    fzf
     ffmpeg
     file
-    fzf
     git
     htop
     lazygit
@@ -52,7 +49,6 @@
     neofetch
     nix-index
     ntfs3g
-    openrgb-with-all-plugins
     openssl
     ranger
     scrot
@@ -62,8 +58,8 @@
     unzip
     wget
     yt-dlp
-    zip
     zram-generator
+    zip
 
     # GUI utils
     dmenu
@@ -74,9 +70,9 @@
     screenkey
 
     # Xorg stuff
+    #xterm
     #xclip
     #xorg.xbacklight
-    #xterm
 
     # Wayland stuff
     cliphist
@@ -88,15 +84,15 @@
     hyprland
     polybar
     seatd
-    waybar
     xdg-desktop-portal-hyprland
+    waybar
 
     # Sound
     pamixer
     pipewire
     pulseaudio
 
-    # GPU stuff 
+    # GPU stuff
     amdvlk
     glaxnimate
     rocm-opencl-icd
