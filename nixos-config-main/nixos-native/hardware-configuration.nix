@@ -26,6 +26,12 @@
   swapDevices =
     [ { device = "/dev/disk/by-uuid/a803ff3f-a45d-47f4-a35e-5826bdc1d54f"; }
     ];
+  
+  fileSystems."/home/kleind/Documents/dol/" = {
+    device = "//backupbeast/Read-Only";
+    fsType = "cifs";
+  };
+
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

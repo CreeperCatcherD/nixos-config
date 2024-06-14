@@ -15,6 +15,7 @@
     wofi
     mpv
     kdenlive
+    dolphin-emu
     discord
     gparted
     obsidian
