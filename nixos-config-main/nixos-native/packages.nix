@@ -6,68 +6,71 @@
 
   environment.systemPackages = with pkgs; [
     # Desktop apps
-    alacritty
-    discord
-    dolphin-emu
-    firefox
-    gparted
-    kdenlive
     konsole
-    mpv
-    obsidian
-    obs-studio
-    pcmanfm-qt
-    rofi
+    firefox
     telegram-desktop
+    alacritty
+    obs-studio
+    rofi
     wofi
+    mpv
+    kdenlive
+    discord
+    gparted
+    obsidian
     zoom-us
+    pcmanfm-qt
 
     # Coding stuff
-    gcc
     gnumake
+    gcc
     nodejs
     python
-    python3.withPackages (ps: with ps; [ requests ])
     vscode
+    (python3.withPackages (ps: with ps; [ requests ]))
 
     # CLI utils
+    fzf
     atuin
     btop
-    brightnessctl
-    cava
     cmatrix
-    fastfetch
-    fzf
-    ffmpeg
+    tmux
+    neofetch
     file
+    tree
+    wget
     git
+    fastfetch
     htop
-    lazygit
+    nix-index
+    unzip
+    scrot
+    ffmpeg
     light
     lux
     mediainfo
-    neofetch
-    nix-index
-    ntfs3g
-    openssl
     ranger
-    scrot
-    swww
-    tmux
-    tree
-    unzip
-    wget
-    yt-dlp
     zram-generator
+    cava
     zip
+    ntfs3g
+    yt-dlp
+    brightnessctl
+    swww
+    openssl
+    lazygit
+    bluez
+    bluez-tools
+    #neovim
+    openrgb-with-all-plugins
 
     # GUI utils
-    dmenu
     feh
-    gromit-mpx
     imv
-    mako
+    dmenu
     screenkey
+    mako
+    gromit-mpx
 
     # Xorg stuff
     #xterm
@@ -75,41 +78,41 @@
     #xorg.xbacklight
 
     # Wayland stuff
-    cliphist
-    wl-clipboard
     xwayland
+    wl-clipboard
+    cliphist
 
     # WMs and stuff
     herbstluftwm
     hyprland
-    polybar
     seatd
     xdg-desktop-portal-hyprland
+    polybar
     waybar
 
     # Sound
-    pamixer
     pipewire
     pulseaudio
+    pamixer
 
-    # GPU stuff
+    # GPU stuff 
     amdvlk
-    glaxnimate
     rocm-opencl-icd
+    glaxnimate
 
     # Screenshotting
-    flameshot
     grim
     grimblast
     slurp
+    flameshot
     swappy
 
     # Other
     home-manager
-    libsForQt5.qt5ct
-    libsForQt5.qtstyleplugin-kvantum
-    papirus-nord
     spice-vdagent
+    libsForQt5.qtstyleplugin-kvantum
+    libsForQt5.qt5ct
+    papirus-nord
   ];
 
   fonts.packages = with pkgs; [
