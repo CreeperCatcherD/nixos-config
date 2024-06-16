@@ -27,6 +27,12 @@
     [ { device = "/dev/disk/by-uuid/a803ff3f-a45d-47f4-a35e-5826bdc1d54f"; }
     ];
 
+  fileSystems."/mnt/network_documents" = {
+    fsType = "cifs";
+    device = "//backupbeast/Read-Only";
+    #options = [ "username=your_username", "password=your_password" ];
+  };
+
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction
