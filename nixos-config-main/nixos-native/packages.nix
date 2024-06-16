@@ -6,113 +6,114 @@
 
   environment.systemPackages = with pkgs; [
     # Desktop apps
-    konsole
-    firefox
-    telegram-desktop
     alacritty
-    obs-studio
-    rofi
-    wofi
-    mpv
-    kdenlive
+    clementine
     discord
+    dolphin-emu
+    firefox
     gparted
+    kdenlive
+    konsole
+    mpv
+    obs-studio
     obsidian
-    zoom-us
     pcmanfm-qt
+    rofi
+    telegram-desktop
+    wofi
+    zoom-us
 
     # Coding stuff
-    gnumake
+    (python3.withPackages (ps: with ps; [ requests ]))
     gcc
+    gnumake
     nodejs
     python
     vscode
-    (python3.withPackages (ps: with ps; [ requests ]))
 
     # CLI utils
-    fzf
     atuin
+    bluez
+    bluez-tools
+    brightnessctl
     btop
+    cava
     cmatrix
-    tmux
-    neofetch
-    file
-    tree
-    wget
-    git
     fastfetch
-    htop
-    nix-index
-    unzip
-    scrot
     ffmpeg
+    file
+    fzf
+    git
+    htop
+    lazygit
     light
     lux
     mediainfo
-    ranger
-    zram-generator
-    cava
-    zip
+    neofetch
+    nix-index
     ntfs3g
-    yt-dlp
-    brightnessctl
-    swww
-    openssl
-    lazygit
-    bluez
-    bluez-tools
-    #neovim
     openrgb-with-all-plugins
+    openssl
+    ranger
+    scrot
+    swww
+    tmux
+    tree
+    unzip
+    wget
+    yt-dlp
+    zip
+    zram-generator
 
     # GUI utils
-    feh
-    imv
     dmenu
-    screenkey
-    mako
+    feh
     gromit-mpx
+    imv
+    mako
+    screenkey
 
     # Xorg stuff
-    #xterm
     #xclip
     #xorg.xbacklight
+    #xterm
 
     # Wayland stuff
-    xwayland
-    wl-clipboard
     cliphist
+    wl-clipboard
+    xwayland
 
     # WMs and stuff
     herbstluftwm
     hyprland
-    seatd
-    xdg-desktop-portal-hyprland
     polybar
+    seatd
     waybar
+    xdg-desktop-portal-hyprland
 
     # Sound
+    pamixer
     pipewire
     pulseaudio
-    pamixer
 
     # GPU stuff 
     amdvlk
-    rocm-opencl-icd
     glaxnimate
+    rocm-opencl-icd
 
     # Screenshotting
+    flameshot
     grim
     grimblast
     slurp
-    flameshot
     swappy
 
     # Other
     home-manager
-    spice-vdagent
-    libsForQt5.qtstyleplugin-kvantum
     libsForQt5.qt5ct
+    libsForQt5.qtstyleplugin-kvantum
     papirus-nord
+    spice-vdagent
   ];
 
   fonts.packages = with pkgs; [
