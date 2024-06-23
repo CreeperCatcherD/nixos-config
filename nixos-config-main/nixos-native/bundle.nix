@@ -1,0 +1,22 @@
+{
+  imports = [
+    ./bluetooth.nix
+    ./bootloader.nix
+    ./env.nix
+    ./hardware.nix
+    ./hyprland.nix
+    ./network.nix
+    ./packages.nix
+    #./samba.nix
+    ./security.nix
+    ./services.nix
+    ./sound.nix
+    ./steam.nix
+    ./system.nix
+    ./trim.nix
+    ./user.nix
+    ./virtmanager.nix
+    ./xserver.nix
+    ./zram.nix
+  ];
+}

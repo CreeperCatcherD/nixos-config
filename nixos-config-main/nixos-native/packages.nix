@@ -8,7 +8,7 @@
     # Desktop apps
     alacritty
     clementine
-    discord
+    #discord
     dolphin-emu
     firefox
     gparted
@@ -91,13 +91,7 @@
     waybar
     xdg-desktop-portal-hyprland
 
-    # Sound
-    pamixer
-    pipewire
-    pulseaudio
-
     # GPU stuff 
-    amdvlk
     glaxnimate
     rocm-opencl-icd
 
