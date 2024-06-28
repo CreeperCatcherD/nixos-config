@@ -141,6 +141,7 @@
     firefox
     kate
     git
+    steam
     vscode
     gparted
     fzf

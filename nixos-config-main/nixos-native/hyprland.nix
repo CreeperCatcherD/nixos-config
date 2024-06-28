@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ config, pkgs, ... }: {
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -14,5 +14,13 @@
   };
 
   #Most wayland compositors need this
-  hardware.nvidia.modesetting.enable = true;
+  hardware = {
+    nvidia = {
+      modesetting.enable = true;
+      powerManagement.enable = false;
+      nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.beta;
+    };
+    opengl.extraPackages = [ pkgs.vaapiVdpau ];
+  };
 }
