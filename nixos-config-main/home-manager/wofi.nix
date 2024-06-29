@@ -20,10 +20,10 @@
     };
     style =''
     /* Mocha Mauve */
-    @define-color accent #cba6f7;
+    /* @define-color accent #cba6f7;
     @define-color txt #cad3f5;
     @define-color bg #24273a;
-    @define-color bg2 #494d64;
+    @define-color bg2 #494d64; */
 
     * {
         font-family: 'JetBrains Mono Nerd Font', monospace;

@@ -17,7 +17,7 @@
     ++ [(import ./packages.nix)]                  # other packages
     ++ [(import ./scripts/scripts.nix)]           # personal scripts
     ++ [(import ./swaylock.nix)]                  # lock screen
-    ++ [(import ./vscodium.nix)]                  # vscode forck
+    #++ [(import ./vscodium.nix)]                  # vscode forck
     ++ [(import ./waybar)]                        # status bar
     ++ [(import ./wofi.nix)]                      # launcher
     ++ [(import ./zsh.nix)];                      # shell

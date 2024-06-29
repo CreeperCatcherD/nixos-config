@@ -1,116 +1,123 @@
 { ... }:
 {
-  programs.waybar.settings.mainBar = {
-    position= "bottom";
-    layer= "top";
-    height= 5;
-    margin-top= 0;
-    margin-bottom= 0;
-    margin-left= 0;
-    margin-right= 0;
-    modules-left= [
-        "custom/launcher" 
-        "hyprland/workspaces"
-    ];
-    modules-center= [
-        "clock"
-    ];
-    modules-right= [
-        "tray" 
-        "cpu"
-        "memory"
-        "disk"
-        "pulseaudio" 
-        "battery"
-        "network"
-    ];
-    clock= {
-        calendar = {
-          format = { today = "<span color='#b4befe'><b><u>{}</u></b></span>"; };
+    programs.waybar = {
+        enable = true;
+        settings = {
+        mainBar = {
+            layer = "top";
+            position = "top";
+            margin = "9 13 -10 18";
+
+            modules-left = ["hyprland/workspaces" "hyprland/language" "keyboard-state" "hyprland/submap"];
+            modules-center = ["clock"];
+            modules-right = ["pulseaudio" "cpu" "backlight" "battery" "tray"];
+
+            "hyprland/workspaces" = {
+            disable-scroll = true;
+            };
+
+        "hyprland/language" = {
+            format-en = "US";
+            format-ru = "RU";
+            min-length = 5;
+            tooltip = false;
         };
-        format = " {:%H:%M}";
-        tooltip= "true";
-        tooltip-format= "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-        format-alt= " {:%d/%m}";
-    };
-    "hyprland/workspaces"= {
-        active-only= false;
-        disable-scroll= true;
-        format = "{icon}";
-        on-click= "activate";
-        format-icons= {
-            "1"= "󰈹";
-            "2"= "";
-            "3"= "󰘙";
-            "4"= "󰙯";
-            "5"= "";
-            "6"= "";
-            urgent= "";
-            default = "";
-            sort-by-number= true;
+
+        "keyboard-state" = {
+            #numlock = true;
+            capslock = true;
+            format = "{icon} ";
+            format-icons = {
+                locked = " ";
+                unlocked = "";
+            };
         };
-        persistent-workspaces = {
-            "1"= [];
-            "2"= [];
-            "3"= [];
-            "4"= [];
-            "5"= [];
+
+        "clock" = {
+            # timezone = "America/New_York";
+            tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+            format = "{:%a; %d %b, %I:%M %p}";
+        };
+
+        "custom/weather" = {
+            format = "{}";
+            tooltip = true;
+            interval = 1800;
+            exec = "$HOME/.config/waybar/scripts/wttr.py";
+            return-type = "json";
+        };
+
+        "pulseaudio" = {
+            # scroll-step = 1; # %, can be a float
+            reverse-scrolling = 1;
+            format = "{volume}% {icon} {format_source}";
+            format-bluetooth = "{volume}% {icon} {format_source}";
+            format-bluetooth-muted = " {icon} {format_source}";
+            format-muted = " {format_source}";
+            format-source = "{volume}% ";
+            format-source-muted = "";
+            format-icons = {
+                headphone = "";
+                hands-free = "";
+                headset = "";
+                phone = "";
+                portable = "";
+                car = "";
+                default = ["" "" ""];
+            };
+            on-click = "pavucontrol";
+            min-length = 13;
+        };
+
+        "custom/mem" = {
+            format = "{} ";
+            interval = 3;
+            exec = "free -h | awk '/Mem:/{printf $3}'";
+            tooltip = false;
+        };
+
+        "cpu" = {
+        interval = 2;
+        format = "{usage}% ";
+        min-length = 6;
+        };
+
+        "temperature" = {
+            # thermal-zone = 2;
+            # hwmon-path = "/sys/class/hwmon/hwmon2/temp1_input";
+            critical-threshold = 80;
+            # format-critical = "{temperatureC}°C {icon}";
+            format = "{temperatureC}°C {icon}";
+            format-icons = ["" "" "" "" ""];
+            tooltip = false;
+        };
+
+        "backlight" = {
+            device = "intel_backlight";
+            format = "{percent}% {icon}";
+            format-icons = [""];
+            min-length = 7;
+        };
+
+        battery = {
+            states = {
+                warning = 30;
+                critical = 15;
+            };
+            format = "{capacity}% {icon}";
+            format-charging = "{capacity}% ";
+            format-plugged = "{capacity}% ";
+            format-alt = "{time} {icon}";
+            format-icons = ["" "" "" "" "" "" "" "" "" ""];
+        on-update = "$HOME/.config/waybar/scripts/check_battery.sh";
+        };
+
+        tray = {
+            icon-size = 16;
+            spacing = 0;
+        };
+
+        };
         };
     };
-    memory= {
-        format= "󰟜 {}%";
-        format-alt= "󰟜 {used} GiB"; # 
-        interval= 2;
-    };
-    cpu= {
-        format= "  {usage}%";
-        format-alt= "  {avg_frequency} GHz";
-        interval= 2;
-    };
-    disk = {
-        # path = "/";
-        format = "󰋊 {percentage_used}%";
-        interval= 60;
-    };
-    network = {
-        format-wifi = "  {signalStrength}%";
-        format-ethernet = "󰀂 ";
-        tooltip-format = "Connected to {essid} {ifname} via {gwaddr}";
-        format-linked = "{ifname} (No IP)";
-        format-disconnected = "󰖪 ";
-    };
-    tray= {
-        icon-size= 20;
-        spacing= 8;
-    };
-    pulseaudio= {
-        format= "{icon} {volume}%";
-        format-muted= "󰖁  {volume}%";
-        format-icons= {
-            default= [" "];
-        };
-        scroll-step= 5;
-        on-click= "pamixer -t";
-    };
-    battery = {
-        format = "{icon} {capacity}%";
-        format-icons = [" " " " " " " " " "];
-        format-charging = " {capacity}%";
-        format-full = " {capacity}%";
-        format-warning = " {capacity}%";
-        interval = 5;
-        states = {
-            warning = 20;
-        };
-        format-time = "{H}h{M}m";
-        tooltip = true;
-        tooltip-format = "{time}";
-    };
-    "custom/launcher"= {
-        format= "";
-        on-click= "pkill wofi || wofi --show drun";
-        on-click-right= "pkill wofi || wallpaper-picker"; 
-        tooltip= "false";
-    };
-  };
 }

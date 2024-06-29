@@ -30,11 +30,11 @@
   systemd.extraConfig = "DefaultTimeoutStopSec=10s";
 
   # Enable the KDE Plasma Desktop Environment
-  services.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
+  #services.displayManager.sddm.enable = true;
+  #services.xserver.desktopManager.plasma5.enable = true;
 
 
   # Enable the Hyperland Desktop Environment
-  #services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
 }
