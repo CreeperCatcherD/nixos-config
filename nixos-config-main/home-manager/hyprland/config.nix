@@ -5,7 +5,17 @@
     settings = {
       "$mainMod" = "SUPER";
 
-      monitor = ",preferred,auto,1";
+      monitor = [
+        # Rightmost monitor (1920x1080)
+        "DP-1, 1920x1080@60, 3840x0, 1"  # Landscape, Rightmost
+
+        # Center monitor
+        "DP-2, 1920x1200@60, 1920x0, 1"  # Landscape, Center
+
+        # Leftmost monitor (probably your laptop)
+        "DP-3, 1920x1200@60, 0x0, 1"  # Landscape, Leftmost
+
+      ];
 
       env = [
         "XDG_CURRENT_DESKTOP,Hyprland"
@@ -22,9 +32,9 @@
       };
 
       input = {
-        kb_layout = "us,ru";
-        kb_variant = "lang";
-        kb_options = "grp:caps_toggle";
+        kb_layout = "us";
+        kb_variant = "";
+        kb_options = "";
 
         follow_mouse = 1;
 
@@ -109,12 +119,20 @@
         "float, ^(mpv)$"
       ];
 
+      # autostart
       exec-once = [
-        "swww init"
-        "swww img ~/Pictures/wallpapers/wallpaper.png"
-        "waybar"
-        "wl-paste --type text --watch cliphist store"
-        "wl-paste --type image --watch cliphist store"
+        "systemctl --user import-environment &"
+        "hash dbus-update-activation-environment 2>/dev/null &"
+        "dbus-update-activation-environment --systemd &"
+        "nm-applet &"
+        "wl-clip-persist --clipboard both"
+        "swaybg -m fill -i $(find ~/Pictures/wallpapers/ -maxdepth 1 -type f) &"
+        "sleep 1 && swaylock"
+        "hyprctl setcursor Nordzy-cursors 22 &"
+        "poweralertd &"
+        "waybar &"
+        "mako &"
+        "wl-paste --watch cliphist store &"
       ];
 
       bind = [
@@ -123,7 +141,7 @@
         "$mainMod, Return, exec, alacritty"
         "$mainMod, Q, killactive,"
         "$mainMod, M, exit,"
-        "$mainMod, E, exec, dolphin"
+        "$mainMod, E, exec, nemo ~"
         "$mainMod, F, togglefloating,"
         "$mainMod, D, exec, wofi --show drun"
         "$mainMod, P, pseudo, # dwindle"

@@ -3,9 +3,13 @@ let custom = {
     font = "JetBrainsMono Nerd Font";
     font_size = "15px";
     font_weight = "bold";
-    text_color = "#cdd6f4";
-    secondary_accent= "89b4fa";
-    tertiary_accent = "f5f5f5";
+    #text_color = "#cdd6f4";
+    #secondary_accent= "89b4fa";
+    #tertiary_accent = "f5f5f5";
+    #background = "53d6d3";
+    text_color = "#53d6d3";
+    secondary_accent= "53d6d3";
+    tertiary_accent = "53d6d3";
     background = "53d6d3";
     opacity = "0.98";
 };

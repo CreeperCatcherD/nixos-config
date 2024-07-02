@@ -1,10 +1,16 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {  
-  hardware.opengl.enable = true;
-  hardware.opengl.driSupport = true;
-  hardware.opengl.driSupport32Bit = true;
-  hardware.enableRedistributableFirmware = true;
-  hardware.opengl.extraPackages = with pkgs; [
-    
-  ];
+  #Most wayland compositors need this
+  hardware = {
+    graphics = {
+      enable = true;
+      extraPackages = [ pkgs.vaapiVdpau ];
+    };
+    nvidia = {
+      modesetting.enable = true;
+      powerManagement.enable = false;
+      nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.beta;
+    };
+  };
 }

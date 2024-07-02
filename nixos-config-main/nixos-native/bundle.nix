@@ -1,4 +1,4 @@
-{
+{ host, ... }: {
   imports = [
     ./bluetooth.nix
     ./bootloader.nix
@@ -19,4 +19,6 @@
     ./xserver.nix
     ./zram.nix
   ];
+  #if (host != "desktop") then
+  #        ++ [./distribute-builds];
 }
