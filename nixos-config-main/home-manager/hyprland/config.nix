@@ -49,8 +49,15 @@
         gaps_in = 5;
         gaps_out = 20;
         border_size = 3;
-        "col.active_border" = "rgba(53d6d3ee) rgba(d1a740ee) 45deg";
-        "col.inactive_border" = "rgba(3a5d99aa)";
+        #
+        #/* CSV */
+        # 050505,515151,b5b5b5,7c7c7c,3c3c3c,272727,848484,737474,343434,1c1c1c
+
+        # /* Array */
+        # ["050505","515151","b5b5b5","7c7c7c","3c3c3c","272727","848484","737474","343434","1c1c1c"]
+        #
+        "col.active_border" = "rgba(ffffffee) rgba(1c1c1cee) rgba(ffffffee) 45deg";
+        "col.inactive_border" = "rgba(1c1c1cff)";
 
         layout = "dwindle";
 

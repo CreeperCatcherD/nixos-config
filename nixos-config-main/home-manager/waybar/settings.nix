@@ -8,7 +8,8 @@
             position = "top";
             margin = "9 13 -10 18";
 
-            modules-left = ["hyprland/workspaces" "hyprland/language" "keyboard-state" "hyprland/submap"];
+            #modules-left = ["hyprland/workspaces" "hyprland/language" "hyprland/submap"];
+            modules-left = ["hyprland/workspaces" "hyprland/submap"];
             modules-center = ["clock"];
             modules-right = ["pulseaudio" "cpu" "backlight" "battery" "tray"];
 
@@ -34,18 +35,18 @@
         };
 
         "clock" = {
-            # timezone = "America/New_York";
+            timezone = "America/Chicago";
             tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
             format = "{:%a; %d %b, %I:%M %p}";
         };
 
-        "custom/weather" = {
-            format = "{}";
-            tooltip = true;
-            interval = 1800;
-            exec = "$HOME/.config/waybar/scripts/wttr.py";
-            return-type = "json";
-        };
+        # "custom/weather" = {
+        #     format = "{}";
+        #     tooltip = true;
+        #     interval = 1800;
+        #     exec = "$HOME/.config/waybar/scripts/wttr.py";
+        #     return-type = "json";
+        # };
 
         "pulseaudio" = {
             # scroll-step = 1; # %, can be a float

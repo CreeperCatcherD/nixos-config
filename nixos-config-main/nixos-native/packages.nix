@@ -6,7 +6,7 @@
 
   environment.systemPackages = with pkgs; [
     # Desktop apps
-    alacritty
+    blender
     clementine
     #discord
     dolphin-emu
@@ -18,7 +18,6 @@
     obs-studio
     obsidian
     pcmanfm-qt
-    rofi
     telegram-desktop
     wofi
     zoom-us
@@ -60,6 +59,7 @@
     tmux
     tree
     unzip
+    w3m
     wget
     yt-dlp
     zip
@@ -84,12 +84,12 @@
     xwayland
 
     # WMs and stuff
-    herbstluftwm
-    hyprland
-    polybar
-    seatd
-    waybar
-    xdg-desktop-portal-hyprland
+    # herbstluftwm
+    # hyprland
+    # polybar
+    # seatd
+    # waybar
+    # xdg-desktop-portal-hyprland
 
     # GPU stuff 
     glaxnimate
@@ -103,7 +103,7 @@
     swappy
 
     # Other
-    home-manager
+    #home-manager
     libsForQt5.qt5ct
     libsForQt5.qtstyleplugin-kvantum
     papirus-nord

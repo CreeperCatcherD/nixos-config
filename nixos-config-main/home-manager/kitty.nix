@@ -3,16 +3,17 @@
   programs.kitty = {
     enable = true;
 
-    theme = "Catppuccin-Mocha";
+    #theme = "Catppuccin-Mocha";
     
     font = {
       name = "JetBrainsMono Nerd Font";
-      size = 13;
+      size = 12;
     };
 
     settings = {
       confirm_os_window_close = 0;
-      background_opacity = "0.55";  
+      background_opacity = "0";  
+      background_blur = "1";
       window_padding_width = 10;
       scrollback_lines = 10000;
       enable_audio_bell = false;
