@@ -7,6 +7,8 @@
     #nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    stylix.url = "github:danth/stylix";
+
     #nur.url = "github:nix-community/NUR";
   
     hypr-contrib.url = "github:hyprwm/contrib";
@@ -53,17 +55,23 @@
       nixosConfigurations = {
         desktop = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [ (import ./hosts/desktop) ];
+          modules = [
+            (import ./hosts/desktop)
+            inputs.stylix.nixosModules.stylix];
           specialArgs = { host="desktop"; inherit self inputs username pkgs-stable ; };
         };
         laptop = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [ (import ./hosts/laptop) ];
+          modules = [
+            (import ./hosts/laptop)
+            inputs.stylix.nixosModules.stylix];
           specialArgs = { host="laptop"; inherit self inputs username pkgs-stable ; };
         };
         vm = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [ (import ./hosts/vm) ];
+          modules = [
+            (import ./hosts/vm)
+            inputs.stylix.nixosModules.stylix];
           specialArgs = { host="vm"; inherit self inputs username pkgs-stable ; };
         };
       };

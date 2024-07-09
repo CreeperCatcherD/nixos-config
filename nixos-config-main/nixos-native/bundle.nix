@@ -7,11 +7,12 @@
     ./hyprland.nix
     ./network.nix
     ./packages.nix
-    #./samba.nix
+    # ./samba.nix
     ./security.nix
     ./services.nix
     ./sound.nix
     ./steam.nix
+    # ./stylix.nix
     ./system.nix
     ./trim.nix
     ./user.nix

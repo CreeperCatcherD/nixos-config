@@ -9,18 +9,19 @@
     blender
     clementine
     #discord
-    dolphin-emu
+    #dolphin-emu
     firefox
     gparted
-    kdenlive
-    konsole
+    kitty
+    #kdenlive
+    #konsole
     mpv
     obs-studio
     obsidian
-    pcmanfm-qt
-    telegram-desktop
-    wofi
-    zoom-us
+    #pcmanfm-qt
+    #telegram-desktop
+    #wofi
+    #zoom-us
 
     # Coding stuff
     (python3.withPackages (ps: with ps; [ requests ]))
@@ -42,7 +43,6 @@
     ffmpeg
     file
     fzf
-    git
     htop
     lazygit
     light
@@ -79,9 +79,9 @@
     #xterm
 
     # Wayland stuff
-    cliphist
-    wl-clipboard
-    xwayland
+    #cliphist
+    #wl-clipboard
+    #xwayland
 
     # WMs and stuff
     # herbstluftwm
@@ -96,7 +96,6 @@
     rocm-opencl-icd
 
     # Screenshotting
-    flameshot
     grim
     grimblast
     slurp

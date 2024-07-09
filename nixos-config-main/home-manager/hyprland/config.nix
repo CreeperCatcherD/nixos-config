@@ -12,10 +12,11 @@
         # Center monitor
         "DP-2, 1920x1200@60, 1920x0, 1"  # Landscape, Center
 
-        # Leftmost monitor (probably your laptop)
+        # Leftmost monitor
         "DP-3, 1920x1200@60, 0x0, 1"  # Landscape, Leftmost
 
-      ];
+      ]
+      ++ [ ",preferred,auto,1" ];
 
       env = [
         "XDG_CURRENT_DESKTOP,Hyprland"
@@ -83,8 +84,9 @@
       animations = {
         enabled = true;
 
-        bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
+        # bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
         # bezier = "myBezier, 0.33, 0.82, 0.9, -0.08";
+        bezier = "myBezier, 0.1, 0.9, 0.1, 1.1";
 
         animation = [
           "windows,     1, 7,  myBezier"
@@ -153,7 +155,7 @@
         "$mainMod, D, exec, wofi --show drun"
         "$mainMod, P, pseudo, # dwindle"
         "$mainMod, J, togglesplit, # dwindle"
-        "$mainMod, T, exec, konsole"
+        "$mainMod, T, exec, kitty"
 
         # Move focus with mainMod + arrow keys
         "$mainMod, left,  movefocus, l"
