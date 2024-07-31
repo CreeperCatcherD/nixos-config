@@ -72,4 +72,3 @@
       #};
     };
 }
-/home/kleind/Downloads/3DS1518 - Kirby - Planet Robobot (USA).3ds
