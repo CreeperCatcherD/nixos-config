@@ -31,13 +31,17 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, ... } @ inputs:
+  outputs = { self, nixpkgs, nixpkgs-stable, nixpkgs-unstable, home-manager, ... } @ inputs:
 
     let
       username = "kleind";
       system = "x86_64-linux";
       enable-nvidia = true;
       pkgs-stable = import nixpkgs-stable {
+          inherit system;
+          config.allowUnfree = true;
+        };
+      pkgs-unstable = import nixpkgs-unstable {
           inherit system;
           config.allowUnfree = true;
         };
@@ -48,21 +52,21 @@
           modules = [
             (import ./hosts/desktop)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="desktop"; inherit self inputs username pkgs-stable enable-nvidia ; };
+          specialArgs = { host="desktop"; inherit self inputs username pkgs-stable enable-nvidia pkgs-unstable ; };
         };
         laptop = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             (import ./hosts/laptop)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="laptop"; inherit self inputs username pkgs-stable enable-nvidia ; };
+          specialArgs = { host="laptop"; inherit self inputs username pkgs-stable enable-nvidia pkgs-unstable ; };
         };
         vm = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             (import ./hosts/vm)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="vm"; inherit self inputs username pkgs-stable enable-nvidia ; };
+          specialArgs = { host="vm"; inherit self inputs username pkgs-stable enable-nvidia pkgs-unstable ; };
         };
       };
 

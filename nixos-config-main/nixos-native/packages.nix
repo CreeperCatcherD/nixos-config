@@ -1,4 +1,4 @@
-{ pkgs, pkgs-stable, ... }: {
+{ pkgs, pkgs-stable, pkgs-unstable, ... }: {
   nixpkgs.config = {
     allowUnfree = true;
     permittedInsecurePackages = ["python-2.7.18.8" "electron-25.9.0"];
@@ -17,7 +17,7 @@
     lmstudio
     mpv
     obs-studio
-    obsidian
+    pkgs-unstable.obsidian
     #pcmanfm-qt
     #telegram-desktop
     #wofi

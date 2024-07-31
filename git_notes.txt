@@ -1,2 +1,2 @@
-
+git remote add "origin" git@github.com:CreeperCatcherD/nixos-config.git
 git remote set-url origin git@github.com:CreeperCatcherD/nixos-config.git
