@@ -1,4 +1,4 @@
-{ pkgs, username, ... }: 
+{ pkgs, username, enable-nvidia, ... }: 
 {
   services = {
   
@@ -14,7 +14,7 @@
       xkb.layout = "us";
       xkb.variant = "";
 
-      videoDrivers = [ "nvidia" ];
+      videoDrivers = if (enable-nvidia == true) then [ "nvidia" ] else [];
       deviceSection = ''Option "TearFree" "True"'';
     };
 

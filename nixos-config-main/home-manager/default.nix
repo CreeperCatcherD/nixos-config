@@ -5,7 +5,7 @@
     ++ [(import ./btop.nix)]                      # resouces monitor 
     # ++ [(import ./cava.nix)]                      # audio visualizer
     ++ [(import ./discord.nix)]                   # discord with catppuccin theme
-    ++ [(import ./floorp/floorp.nix)]             # firefox based browser
+    # ++ [(import ./floorp/floorp.nix)]             # firefox based browser
     ++ [(import ./gaming.nix)]                    # packages related to gaming
     ++ [(import ./git.nix)]                       # version control
     ++ [(import ./gtk.nix)]                       # gtk theme

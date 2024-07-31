@@ -4,8 +4,9 @@
   inputs = {
 
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
-    #nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     stylix.url = "github:danth/stylix";
 
@@ -20,25 +21,13 @@
   
     hyprland = {
       url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
     };
   
     home-manager = {
-      url = "github:nix-community/home-manager";
+      #url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    catppuccin-bat = {
-      url = "github:catppuccin/bat";
-      flake = false;
-    };
-    catppuccin-cava = {
-      url = "github:catppuccin/cava";
-      flake = false;
-    };
-    catppuccin-starship = {
-      url = "github:catppuccin/starship";
-      flake = false;
     };
   };
 
@@ -47,6 +36,7 @@
     let
       username = "kleind";
       system = "x86_64-linux";
+      enable-nvidia = true;
       pkgs-stable = import nixpkgs-stable {
           inherit system;
           config.allowUnfree = true;
@@ -58,21 +48,21 @@
           modules = [
             (import ./hosts/desktop)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="desktop"; inherit self inputs username pkgs-stable ; };
+          specialArgs = { host="desktop"; inherit self inputs username pkgs-stable enable-nvidia ; };
         };
         laptop = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             (import ./hosts/laptop)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="laptop"; inherit self inputs username pkgs-stable ; };
+          specialArgs = { host="laptop"; inherit self inputs username pkgs-stable enable-nvidia ; };
         };
         vm = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             (import ./hosts/vm)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="vm"; inherit self inputs username pkgs-stable ; };
+          specialArgs = { host="vm"; inherit self inputs username pkgs-stable enable-nvidia ; };
         };
       };
 
@@ -82,3 +72,4 @@
       #};
     };
 }
+/home/kleind/Downloads/3DS1518 - Kirby - Planet Robobot (USA).3ds

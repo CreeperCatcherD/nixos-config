@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   hardware.pulseaudio.enable = false;
-  sound.enable = true;
+  #sound.enable = true;
 
   services.pipewire = {
     enable = true;

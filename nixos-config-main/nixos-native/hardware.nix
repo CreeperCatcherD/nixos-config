@@ -2,15 +2,15 @@
 {  
   #Most wayland compositors need this
   hardware = {
-    graphics = {
+    opengl = {
       enable = true;
       extraPackages = [ pkgs.vaapiVdpau ];
     };
-    nvidia = {
-      modesetting.enable = true;
-      powerManagement.enable = false;
-      nvidiaSettings = true;
-      package = config.boot.kernelPackages.nvidiaPackages.beta;
-    };
+    #nvidia = {
+    #  modesetting.enable = true;
+    #  powerManagement.enable = false;
+    #  nvidiaSettings = true;
+    #  package = config.boot.kernelPackages.nvidiaPackages.beta;
+    #};
   };
 }

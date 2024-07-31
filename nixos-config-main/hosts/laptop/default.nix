@@ -26,10 +26,11 @@
     };
 
     auto-cpufreq = {
+      # balanced performance powersave
       enable = true;
       settings = {
         battery = {
-          governor = "performance";
+          governor = "balanced";
           turbo = "auto";
         };
         charger = {

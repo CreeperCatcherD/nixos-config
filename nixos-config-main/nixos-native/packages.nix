@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, pkgs-stable, ... }: {
   nixpkgs.config = {
     allowUnfree = true;
     permittedInsecurePackages = ["python-2.7.18.8" "electron-25.9.0"];
@@ -8,13 +8,13 @@
     # Desktop apps
     blender
     clementine
-    #discord
     #dolphin-emu
     firefox
     gparted
     kitty
     #kdenlive
     #konsole
+    lmstudio
     mpv
     obs-studio
     obsidian
@@ -28,7 +28,6 @@
     gcc
     gnumake
     nodejs
-    python
     vscode
 
     # CLI utils
@@ -44,7 +43,7 @@
     file
     fzf
     htop
-    lazygit
+    #lazygit
     light
     lux
     mediainfo

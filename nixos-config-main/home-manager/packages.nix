@@ -24,8 +24,8 @@
     toipe                             # typing test in the terminal
     valgrind                          # c memory analyzer
     yazi                              # terminal file manager
-    youtube-dl
-    zenity
+    #youtube-dl
+    #zenity
     wdisplays
     winetricks
     wineWowPackages.wayland

@@ -24,6 +24,7 @@
   environment.systemPackages = with pkgs; [
     wget
     git
+    git-lfs
   ];
 
   # Enable CUPS to print documents.
