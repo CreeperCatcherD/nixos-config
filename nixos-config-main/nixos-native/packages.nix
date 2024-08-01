@@ -1,7 +1,7 @@
 { pkgs, pkgs-stable, pkgs-unstable, ... }: {
   nixpkgs.config = {
     allowUnfree = true;
-    permittedInsecurePackages = ["python-2.7.18.8" "electron-25.9.0"];
+    #permittedInsecurePackages = ["python-2.7.18.8" "electron-25.9.0"];
   };
 
   environment.systemPackages = with pkgs; [
@@ -24,7 +24,7 @@
     #zoom-us
 
     # Coding stuff
-    (python3.withPackages (ps: with ps; [ requests ]))
+    #(python3.withPackages (ps: with ps; [ requests ]))
     gcc
     gnumake
     nodejs

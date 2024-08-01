@@ -35,7 +35,7 @@
     gnumake
 
     # Python
-    python3
+    #python3
 
     bleachbit                         # cache cleaner
     cmatrix

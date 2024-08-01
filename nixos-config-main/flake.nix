@@ -36,7 +36,7 @@
     let
       username = "kleind";
       system = "x86_64-linux";
-      enable-nvidia = true;
+      enable-nvidia = false;
       pkgs-stable = import nixpkgs-stable {
           inherit system;
           config.allowUnfree = true;
