@@ -2,7 +2,7 @@
 {  
   #Most wayland compositors need this
   hardware = {
-    opengl = {
+    graphics = {
       enable = true;
       extraPackages = [ pkgs.vaapiVdpau ];
     };
