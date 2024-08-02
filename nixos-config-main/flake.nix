@@ -21,7 +21,7 @@
   
     hyprland = {
       url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   
     home-manager = {
@@ -36,7 +36,7 @@
     let
       username = "kleind";
       system = "x86_64-linux";
-      enable-nvidia = false;
+      enable-nvidia = true;
       pkgs-stable = import nixpkgs-stable {
           inherit system;
           config.allowUnfree = true;

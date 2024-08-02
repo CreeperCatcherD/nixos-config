@@ -3,7 +3,7 @@
   programs.wofi = {
     enable = true;
     settings = {
-      width = 400;
+      width = 480;
       height = 350;
       location = "center";
       show = "drun";
@@ -19,11 +19,13 @@
       gtk_dark = true;
     };
     style =''
-    /* Mocha Mauve */
-    /* @define-color accent #cba6f7;
-    @define-color txt #cad3f5;
-    @define-color bg #24273a;
-    @define-color bg2 #494d64; */
+    /* 050505,515151,b5b5b5,7c7c7c,3c3c3c,272727,848484,737474,343434,1c1c1c */
+    @define-color accent #848484; /* Selected color */
+    @define-color border #b5b5b5; /* Uh, border     */
+    @define-color txt    #b5b5b5; /* Default Text   */
+    @define-color txt2   #272727; /* Selected Text  */
+    @define-color bg     #272727; /* Main bg        */
+    @define-color bg2    #848484; /* Searchbar      */
 
     * {
         font-family: 'JetBrains Mono Nerd Font', monospace;
@@ -34,7 +36,7 @@
     window {
         margin: 0px;
         padding: 10px;
-        border: 3px solid @accent;
+        border: 3px solid @border;
         border-radius: 7px;
         background-color: @bg;
         animation: slideIn 0.5s ease-in-out both;
@@ -91,7 +93,7 @@
         margin: 5px;
         padding: 10px;
         border: none;
-        color: @accent;
+        color: @txt2;
         background-color: @bg2;
         animation: fadeIn 0.5s ease-in-out both;
     }
@@ -107,11 +109,12 @@
 
     /* Selected Entry */
     #entry:selected {
+      border-radius: 5px 5px 5px 5px;
       background-color: @accent;
     }
 
     #entry:selected #text {
-        color: @bg2;
+        color: @txt2;
     }
     '';
   };

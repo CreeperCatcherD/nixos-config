@@ -9,6 +9,7 @@
     acpi
     brightnessctl
     cpupower-gui
+    light
     powertop
   ];
   

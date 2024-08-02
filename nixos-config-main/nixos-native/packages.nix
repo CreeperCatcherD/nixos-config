@@ -8,20 +8,18 @@
     # Desktop apps
     blender
     clementine
-    #dolphin-emu
     firefox
-    gparted
-    kitty
-    #kdenlive
-    #konsole
-    lmstudio
-    mpv
+    kdenlive
     obs-studio
     pkgs-unstable.obsidian
     #pcmanfm-qt
-    #telegram-desktop
-    #wofi
-    #zoom-us
+
+    (pkgs.lmstudio.overrideAttrs {
+      src = fetchurl {
+        url = "https://releases.lmstudio.ai/linux/x86/0.2.25/beta/LM_Studio-0.2.25.AppImage";
+        hash = "sha256-2a3ac+0m3C/YyPM0Waia+x2Q/lodfbyHNvlbB2AHT78=";
+      };
+    })
 
     # Coding stuff
     #(python3.withPackages (ps: with ps; [ requests ]))
@@ -34,20 +32,10 @@
     atuin
     bluez
     bluez-tools
-    brightnessctl
-    btop
-    cava
-    cmatrix
     fastfetch
-    ffmpeg
     file
-    fzf
-    htop
-    #lazygit
-    light
     lux
     mediainfo
-    neofetch
     nix-index
     ntfs3g
     openrgb-with-all-plugins
