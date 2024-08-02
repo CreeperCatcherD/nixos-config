@@ -37,6 +37,7 @@
       username = "kleind";
       system = "x86_64-linux";
       enable-nvidia = true;
+      rgb-lights-enable= true;
       pkgs-stable = import nixpkgs-stable {
           inherit system;
           config.allowUnfree = true;
@@ -52,21 +53,21 @@
           modules = [
             (import ./hosts/desktop)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="desktop"; inherit self inputs username pkgs-stable enable-nvidia pkgs-unstable ; };
+          specialArgs = { host="desktop"; inherit self inputs username pkgs-stable enable-nvidia pkgs-unstable rgb-lights-enable; };
         };
         laptop = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             (import ./hosts/laptop)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="laptop"; inherit self inputs username pkgs-stable enable-nvidia pkgs-unstable ; };
+          specialArgs = { host="laptop"; inherit self inputs username pkgs-stable enable-nvidia pkgs-unstable rgb-lights-enable; };
         };
         vm = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             (import ./hosts/vm)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="vm"; inherit self inputs username pkgs-stable enable-nvidia pkgs-unstable ; };
+          specialArgs = { host="vm"; inherit self inputs username pkgs-stable enable-nvidia pkgs-unstable rgb-lights-enable; };
         };
       };
 
