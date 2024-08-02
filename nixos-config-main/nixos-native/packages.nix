@@ -38,7 +38,6 @@
     mediainfo
     nix-index
     ntfs3g
-    openrgb-with-all-plugins
     openssl
     ranger
     scrot
@@ -53,47 +52,12 @@
     zram-generator
 
     # GUI utils
-    dmenu
+    #dmenu
     feh
     gromit-mpx
-    imv
-    mako
     screenkey
 
-    # Xorg stuff
-    #xclip
-    #xorg.xbacklight
-    #xterm
-
-    # Wayland stuff
-    #cliphist
-    #wl-clipboard
-    #xwayland
-
-    # WMs and stuff
-    # herbstluftwm
-    # hyprland
-    # polybar
-    # seatd
-    # waybar
-    # xdg-desktop-portal-hyprland
-
-    # GPU stuff 
-    glaxnimate
-    rocm-opencl-icd
-
-    # Screenshotting
-    grim
-    grimblast
-    slurp
-    swappy
-
-    # Other
-    #home-manager
-    #libsForQt5.qt5ct
-    #libsForQt5.qtstyleplugin-kvantum
-    #papirus-nord
-    #spice-vdagent
+    #rocm-opencl-icd
   ];
 
   fonts.packages = with pkgs; [

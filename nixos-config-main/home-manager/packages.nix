@@ -5,7 +5,7 @@
     eza                               # ls replacement
     entr                              # perform action when file change
     fd                                # find replacement
-    file                              # Show file information 
+    file                              # show file information 
     fzf                               # fuzzy finder
     gtt                               # google translate TUI
     gimp
@@ -14,7 +14,7 @@
     jdk17                             # java
     lazygit
     libreoffice
-    nemo-with-extensions     # file manager
+    nemo-with-extensions              # file manager
     nitch                             # systhem fetch util
     nix-prefetch-github
     prismlauncher                     # minecraft launcher

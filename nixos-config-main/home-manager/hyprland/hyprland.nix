@@ -7,6 +7,7 @@
     hyprpicker
     grim
     slurp
+    swappy
     wl-clip-persist
     wf-recorder
     glib

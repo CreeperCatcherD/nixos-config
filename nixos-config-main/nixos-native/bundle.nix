@@ -6,6 +6,7 @@
     ./hardware.nix
     ./hyprland.nix
     ./network.nix
+    ./openrgb.nix
     ./packages.nix
     # ./samba.nix
     ./security.nix
