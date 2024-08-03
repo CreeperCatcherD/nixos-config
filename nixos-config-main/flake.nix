@@ -36,8 +36,8 @@
     let
       username = "kleind";
       system = "x86_64-linux";
-      enable-nvidia = true;
-      rgb-lights-enable= true;
+      enable-nvidia = false;
+      rgb-lights-enable= false;
       pkgs-stable = import nixpkgs-stable {
           inherit system;
           config.allowUnfree = true;
