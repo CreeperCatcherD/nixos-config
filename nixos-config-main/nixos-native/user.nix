@@ -1,4 +1,4 @@
-{ pkgs, inputs, username, host, ... }: {
+{ pkgs, inputs, username, host, myOptions, ... }: {
   
   imports = [ inputs.home-manager.nixosModules.home-manager ];
   home-manager = {
@@ -34,7 +34,7 @@
 
   # Enable automatic login for the user.
   services.displayManager.autoLogin = {
-    enable = true;
+    enable = myOptions.enable-auto-login;
     user = "${username}";
   };
 
