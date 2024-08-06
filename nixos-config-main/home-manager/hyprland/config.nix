@@ -71,7 +71,7 @@
 
         blur = {
           enabled = true;
-          size = 16;
+          size = 2;
           passes = 2;
           new_optimizations = true;
         };
@@ -231,6 +231,9 @@
 
         # Disable all effects
         "$mainMod Shift, G, exec, ~/.config/hypr/gamemode.sh "
+
+        # Lock
+        "$mainMod, L, exec, swaylock"
 
         # Screenshots
         #, print, exec, $HOME/.config/hypr/scripts/screenshots/captureAll.sh

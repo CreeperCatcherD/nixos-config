@@ -1,4 +1,4 @@
-{ pkgs, pkgs-stable, pkgs-unstable, ... }: {
+{ pkgs, pkgs-stable, pkgs-unstable, pkgs-main, ... }: {
   nixpkgs.config = {
     allowUnfree = true;
     #permittedInsecurePackages = ["python-2.7.18.8" "electron-25.9.0"];
@@ -16,12 +16,7 @@
     #pcmanfm-qt
     powertop
 
-    (lmstudio.overrideAttrs {
-      src = fetchurl {
-        url = "https://files.lmstudio.ai/linux/0.2.31/beta/LM_Studio-0.2.31.AppImage";
-        hash = "sha256-zC8QQNsT1X8ICiYLy/jYMVp8w8NP7ghtVF06UMC4eOg=";
-      };
-    })
+    pkgs-main.lmstudio
 
     # Coding stuff
     #(python3.withPackages (ps: with ps; [ requests ]))
