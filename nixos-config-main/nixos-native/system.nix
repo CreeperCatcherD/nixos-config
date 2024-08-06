@@ -1,6 +1,7 @@
 { self, pkgs, lib, inputs, ...}: 
 {
   # imports = [ inputs.nix-gaming.nixosModules.default ];
+  boot.cleanTmpDir = true;
   nix = {
     settings = {
       auto-optimise-store = true;

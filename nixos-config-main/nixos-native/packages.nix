@@ -6,18 +6,20 @@
 
   environment.systemPackages = with pkgs; [
     # Desktop apps
+    angryipscanner
     blender
     clementine
     firefox
     kdenlive
     obs-studio
-    pkgs-unstable.obsidian
+    #pkgs-unstable.obsidian
     #pcmanfm-qt
+    powertop
 
-    (pkgs.lmstudio.overrideAttrs {
+    (lmstudio.overrideAttrs {
       src = fetchurl {
-        url = "https://releases.lmstudio.ai/linux/x86/0.2.25/beta/LM_Studio-0.2.25.AppImage";
-        hash = "sha256-2a3ac+0m3C/YyPM0Waia+x2Q/lodfbyHNvlbB2AHT78=";
+        url = "https://files.lmstudio.ai/linux/0.2.31/beta/LM_Studio-0.2.31.AppImage";
+        hash = "sha256-zC8QQNsT1X8ICiYLy/jYMVp8w8NP7ghtVF06UMC4eOg=";
       };
     })
 

@@ -7,7 +7,8 @@
 
       monitor = [
         # Rightmost monitor (1920x1080)
-        "DP-1, 1920x1080@60, 3840x0, 1"  # Landscape, Rightmost
+        "DP-1, 1920x1080@60, 3840x92, 1"  # Landscape, Rightmost
+        #"DP-1, 1920x1080@60, 1920x0, 1"  # Landscape, Rightmost
 
         # Center monitor
         "DP-2, 1920x1200@60, 1920x0, 1"  # Landscape, Center
@@ -230,6 +231,17 @@
 
         # Disable all effects
         "$mainMod Shift, G, exec, ~/.config/hypr/gamemode.sh "
+
+        # Screenshots
+        #, print, exec, $HOME/.config/hypr/scripts/screenshots/captureAll.sh
+        #CTRL, print, exec, $HOME/.config/hypr/scripts/screenshots/captureScreen.sh
+        #CTRL SHIFT, print, exec, $HOME/.config/hypr/scripts/screenshots/captureArea.sh
+
+        # Screenshots
+        ", print, exec, grim $(xdg-user-dir PICTURES)/Screenshots/$(date +'%s_grim.png')"
+        "CTRL, print, exec, grim -g \"$(slurp -o)\" $(xdg-user-dir PICTURES)/Screenshots/$(date +'%s_grim.png')"
+        "CTRL SHIFT, print, exec, grim -g \"$(slurp)\" $(xdg-user-dir PICTURES)/Screenshots/$(date +'%s_grim.png')"
+
       ];
 
       # Move/resize windows with mainMod + LMB/RMB and dragging

@@ -7,6 +7,7 @@
     #nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-main.url = "github:NixOS/nixpkgs";
 
     stylix.url = "github:danth/stylix";
 
@@ -36,8 +37,8 @@
     let
       username = "kleind";
       system = "x86_64-linux";
-      enable-nvidia = false;
-      rgb-lights-enable= false;
+      enable-nvidia = true;
+      rgb-lights-enable= true;
       pkgs-stable = import nixpkgs-stable {
           inherit system;
           config.allowUnfree = true;
