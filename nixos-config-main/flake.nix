@@ -41,14 +41,20 @@
         desktop = {
           enable-nvidia = true;
           enable-rgb-lights = true;
+          hostname = "DESKTOP-GV1U8SC";
+          enable-auto-login = true;
         };
         laptop = {
           enable-nvidia = false;
           enable-rgb-lights = false;
+          hostname = "DESKTOP-SCSCNBU";
+          enable-auto-login = true;
         };
         vm = {
           enable-nvidia = false;
           enable-rgb-lights = false;
+          hostname = "NIXVM";
+          enable-auto-login = true;
         };
       };
 

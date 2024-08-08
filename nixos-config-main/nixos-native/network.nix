@@ -1,9 +1,9 @@
-{ pkgs, ... }: 
+{ pkgs, myOptions, ... }: 
 {
   networking = {
-    hostName = "nixos";
+    hostName = myOptions.hostname;
     networkmanager.enable = true;
-    nameservers = [ "1.1.1.1" ];
+    nameservers = [ "1.1.1.1" "8.8.8.8" ];
     firewall = {
       enable = true;
       #allowedTCPPorts = [ 22 80 443 59010 59011 ];

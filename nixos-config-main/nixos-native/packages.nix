@@ -6,6 +6,7 @@
 
   environment.systemPackages = with pkgs; [
     # Desktop apps
+    arduino
     angryipscanner
     blender
     clementine
