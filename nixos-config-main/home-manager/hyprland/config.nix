@@ -1,4 +1,4 @@
-{ ... }: 
+{ myOptions, ... }: 
 {
   wayland.windowManager.hyprland = {
 
@@ -7,14 +7,24 @@
 
       monitor = [
         # Rightmost monitor (1920x1080)
-        "DP-1, 1920x1080@60, 3840x92, 1"  # Landscape, Rightmost
+        #"DP-1, 1920x1080@60, 3840x92, 1"  # Landscape, Rightmost
         #"DP-1, 1920x1080@60, 1920x0, 1"  # Landscape, Rightmost
 
         # Center monitor
-        "DP-2, 1920x1200@60, 1920x0, 1"  # Landscape, Center
+        #"DP-2, 1920x1200@60, 1920x0, 1"  # Landscape, Center
 
         # Leftmost monitor
-        "DP-3, 1920x1200@60, 0x0, 1"  # Landscape, Leftmost
+        #"DP-3, 1920x1200@60, 0x0, 1"  # Landscape, Leftmost
+
+        # Rightmost monitor (1920x1080)
+        "DP-1, 1920x1200@60, 3840x0, 1"  # Landscape, Rightmost
+        #"DP-1, 1920x1080@60, 1920x0, 1"  # Landscape, Rightmost
+
+        # Center monitor
+        "DP-3, 1920x1080@120, 1920x92, 1"  # Landscape, Center
+
+        # Leftmost monitor
+        "DP-2, 1920x1200@60, 0x0, 1"  # Landscape, Leftmost
 
       ]
       ++ [ ",preferred,auto,1" ];
@@ -143,7 +153,8 @@
         "waybar &"
         "mako &"
         "wl-paste --watch cliphist store &"
-      ];
+      ] ++ (if myOptions.enable-rgb-lights then ["openrgb --startminimized"] else []);
+
 
       bind = [
         "$mainMod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
@@ -213,6 +224,10 @@
         ", XF86AudioLowerVolume, exec, pamixer -d 5 "
         ", XF86AudioMute, exec, pamixer -t"
         ", XF86AudioMicMute, exec, pamixer --default-source -m"
+        "$mainMod ALT, up, exec, pamixer -i 5"
+        "$mainMod ALT, down, exec, pamixer -d 5"
+        #"$mainMod, S, mouse_up, exec, pamixer -i 5"
+        #"$mainMod, S, mouse_up, exec, pamixer -i 5"
         
         # Brightness control
         ", XF86MonBrightnessDown, exec, brightnessctl set 5%- "

@@ -22,7 +22,7 @@
     /* 050505,515151,b5b5b5,7c7c7c,3c3c3c,272727,848484,737474,343434,1c1c1c */
     @define-color accent #848484; /* Selected color */
     @define-color border #b5b5b5; /* Uh, border     */
-    @define-color txt    #b5b5b5; /* Default Text   */
+    @define-color txt    #ffffff; /* Default Text   */
     @define-color txt2   #272727; /* Selected Text  */
     @define-color bg     #272727; /* Main bg        */
     @define-color bg2    #848484; /* Searchbar      */

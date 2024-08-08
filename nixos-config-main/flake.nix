@@ -37,11 +37,21 @@
     let
       username = "kleind";
       system = "x86_64-linux";
-      myOptions = {
-        enable-nvidia = false;
-        enable-rgb-lights = false;
-        enable-auto-login = true;
+      myCOptions = {
+        desktop = {
+          enable-nvidia = true;
+          enable-rgb-lights = true;
+        };
+        laptop = {
+          enable-nvidia = false;
+          enable-rgb-lights = false;
+        };
+        vm = {
+          enable-nvidia = false;
+          enable-rgb-lights = false;
+        };
       };
+
       pkgs-stable = import nixpkgs-stable {
           inherit system;
           config.allowUnfree = true;
@@ -61,21 +71,21 @@
           modules = [
             (import ./hosts/desktop)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="desktop"; inherit self inputs username pkgs-stable pkgs-unstable pkgs-main myOptions; };
+          specialArgs = { host="desktop"; myOptions = myCOptions.desktop; inherit self inputs username pkgs-stable pkgs-main pkgs-unstable; };
         };
         laptop = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             (import ./hosts/laptop)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="laptop"; inherit self inputs username pkgs-stable pkgs-unstable pkgs-main myOptions; };
+          specialArgs = { host="laptop"; myOptions = myCOptions.laptop;  inherit self inputs username pkgs-stable pkgs-main pkgs-unstable; };
         };
         vm = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             (import ./hosts/vm)
             inputs.stylix.nixosModules.stylix];
-          specialArgs = { host="vm"; inherit self inputs username pkgs-stable pkgs-unstable pkgs-main myOptions; };
+          specialArgs = { host="vm"; myOptions = myCOptions.laptop; inherit self inputs username pkgs-stable pkgs-main pkgs-unstable; };
         };
       };
 

@@ -27,7 +27,6 @@
     #youtube-dl
     #zenity
     wdisplays
-    winetricks
     wineWowPackages.wayland
 
     # C / C++

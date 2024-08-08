@@ -62,13 +62,12 @@ in
         box-shadow: inherit;
         text-shadow: inherit;
         border-radius: inherit;
-        color: #${custom.background};
         background: #${custom.background_highlight};
     }
 
     #workspaces button.active {
         background: #${custom.background_highlight};
-        color: white;
+        color: #${custom.text_color};
         border-radius: inherit;
     }
 
