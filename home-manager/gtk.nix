@@ -16,7 +16,7 @@
     # For compatability
     # pkgs.adwaita-icon-theme
     # pkgs.gnome-themes-standard
-  ];  
+  ];
 
   dconf.enable = lib.mkForce true;
 
@@ -34,6 +34,7 @@
 
   gtk = {
     enable = true;
+    gtk4.theme = null;
     
     iconTheme = lib.mkForce  {
       name = "Breeze-Dark";

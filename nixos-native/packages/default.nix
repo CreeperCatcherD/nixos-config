@@ -23,6 +23,7 @@
     pkgsBundle.pkgs-old.chromium          # Chromium Web Browser
     deskflow
     distrobox
+    en-croissant
     freecad
     gimp
     ghidra
@@ -157,7 +158,7 @@
     dosbox-x
     sameboy
     snes9x
-    cemu
+    # cemu
     dolphin-emu
   ];
 

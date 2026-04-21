@@ -14,6 +14,12 @@
     package = pkgsBundle.pkgs-stable.virt-manager;
   };
 
+  virtualisation.waydroid.enable = true;
+
+  networking.firewall.trustedInterfaces = [ "waydroid0" ];
+  boot.kernelModules = [ "binder_linux" "ashmem_linux" ];
+  networking.nftables.enable = true;
+
   environment.systemPackages = [
     pkgs.virt-viewer
   ];

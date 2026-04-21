@@ -11,7 +11,26 @@
   };
 
   # Laptop fan curves
-  hardware.fw-fanctrl.enable = myOptions.power.mobile && (host == "framework1");
+  hardware.fw-fanctrl = {
+    enable = myOptions.power.mobile && (host == "framework1");
+    disableBatteryTempCheck = false;
+    config = {
+      defaultStrategy = "custom";
+      strategies = {
+        "custom" = {
+          fanSpeedUpdateFrequency = 5;
+          movingAverageInterval = 25;
+          speedCurve = [
+            { temp =  0; speed = 0; }
+            { temp = 50; speed = 30; }
+            { temp = 76; speed = 45; }
+            { temp = 85; speed = 55; }
+            { temp = 88; speed = 100; }
+          ];
+        };
+      };
+    };
+  };
 
   services.power-profiles-daemon.enable = false;
   services.tlp = if myOptions.power.mobile then {

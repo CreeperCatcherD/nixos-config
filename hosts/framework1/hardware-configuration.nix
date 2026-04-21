@@ -27,6 +27,13 @@
   swapDevices = [ #{ device = "/dev/disk/by-uuid/a803ff3f-a45d-47f4-a35e-5826bdc1d54f"; }
     { device = "/swapfile"; priority = 1000; size = 40 * 1024; } # 40GB size = 40 * 1024;
   ];
+
+  # Try to fix hibernate
+  boot.kernelParams = [
+    "resume=/dev/disk/by-uuid/96e25f32-426d-4346-b079-6dca8198096c"
+    "resume_offset=9742336"
+    "mem_sleep_default=deep"
+  ];
   # boot.resumeDevice = "/dev/disk/by-uuid/93c7379e-5f08-46ac-a1ef-b5dc8f99ac8f";
 
 
