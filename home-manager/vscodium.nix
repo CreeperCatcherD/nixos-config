@@ -1,6 +1,6 @@
 { lib, config, pkgs, pkgsBundle, inputs, ... }:
 {    
-  programs.vscode = {
+  programs.vscodium = {
     enable = true;
     #TODO Remove telemetry
     # package = pkgs.vscodium;

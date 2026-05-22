@@ -61,6 +61,34 @@
     };
   };
 
+  services.dnscrypt-proxy = {
+    enable = true;
+    settings = {
+      listen_addresses = [ "127.0.0.1:5300" ];
+      server_names = [ "cloudflare" "google" ];
+      doh_servers = true;
+      dnscrypt_servers = false;
+      ipv4_servers = true;
+      ipv6_servers = false;
+      require_dnssec = true;
+      require_nolog = true;
+    };
+  };
+
+  # Point systemd-resolved to dnscrypt-proxy
+  services.resolved = {
+    enable = true;
+    settings = {
+      Resolve = {
+        DNS = [ "127.0.0.1:5300" ];
+        DNSStubListener = "no";
+        DNSSEC = "false"; # dnscrypt-proxy handles this
+        Domains = [ "~ts.net" ]; # route ts.net queries separately
+      };
+    };
+  };
+
+  systemd.services.dnscrypt-proxy2.before = [ "nss-lookup.target" ];
 
   services.openssh = {
       enable = myOptions.enable-ssh-access;

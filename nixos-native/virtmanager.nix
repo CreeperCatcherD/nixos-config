@@ -2,9 +2,12 @@
   # Enable virtualization
   virtualisation.libvirtd = {
     enable = true;
-    qemu.vhostUserPackages = with pkgs; [
-      virtiofsd
-    ];
+    qemu = {
+      swtpm.enable = true;          # TPM emulator
+      vhostUserPackages = with pkgs; [
+        virtiofsd
+      ];
+    };
   };
 
   # virtualisation.waydroid.enable = true;
@@ -22,6 +25,7 @@
 
   environment.systemPackages = [
     pkgs.virt-viewer
+    pkgs.swtpm # software tpm
   ];
 }
 

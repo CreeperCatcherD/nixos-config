@@ -48,6 +48,7 @@
     reaper
     remmina                               # RDP Client
     rpi-imager
+    vcv-rack
     viewnior                              # Image Viewer
     wdisplays
 
@@ -91,6 +92,7 @@
     iperf3                                # Client to Client bandwidth tester
     jq jqp                                # JSON Tools
     killall
+    lavat
     libcaca
     libnotify
     lux                                   # Video Downloader
@@ -112,6 +114,7 @@
     qlcplus                               # Open Source DMX Controller
     ripgrep                               # grep replacement
     scope-tui                             # Terminal Oscilloscope
+    ser2net                               # Serial connections over IP
     speedtest-cli                         # Internet Speedtesting tool
     stress                                # Benchmark workload generator
     tmux                                  # Terminal Multiplexer
