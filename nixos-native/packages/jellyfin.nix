@@ -12,18 +12,4 @@
     pkgs.jellyfin-web
     pkgs.jellyfin-ffmpeg
   ];
-
-  services.sonarr = {
-    enable = true;
-    openFirewall = true;
-    user = "nixuser";
-    group = "users";
-  };
-
-  services.radarr = {
-    enable = true;
-    openFirewall = true;
-    user = "nixuser";
-    group = "users";
-  };
 }

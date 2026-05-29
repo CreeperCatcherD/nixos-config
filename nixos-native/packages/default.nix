@@ -2,10 +2,12 @@
 
   imports = []
     ++ [(import ./blender.nix)]
+    ++ [(import ./docker.nix)]
     ++ [(import ./steam.nix)]                       # Steam integration
     ++ [(import ./obs-studio.nix)]
     ++ [(import ./openrgb.nix)]           # OpenRGB for lighting control
     ++ [(import ./wireshark.nix)]
+    ++ [(import ./flatpak.nix)]
     # Install jellyfin on desktop
     ++ (if host == "desktop" then [(import ./jellyfin.nix)] else []);
 
@@ -19,9 +21,11 @@
     # Desktop apps
     arduino-ide                           # Arduino IDE
     # audio-recorder
-    bitwig-studio
+    # Replaced with the flatpak
+    # (pkgsBundle.pkgs-main.bambu-studio.override { withNvidiaGLWorkaround = myOptions.enable-nvidia-gpu; })
+    # bitwig-studio
     pkgsBundle.pkgs-old.chromium          # Chromium Web Browser
-    deskflow
+    # deskflow
     distrobox
     en-croissant
     freecad
@@ -36,24 +40,22 @@
     nemo                                  # file manager
     nwg-look                              # GTK Config editor
     obsidian                              # Notetaking software
-    ollama                                # LLM Backend
-    openrocket                            # Rocket Simulator
-    orca-slicer                           # 3D Printer Slicer
+    # ollama                                # LLM Backend
+    opencode
+    # openrocket                            # Rocket Simulator
+    # orca-slicer                           # 3D Printer Slicer
     pavucontrol                           # pulseaudio volume controle (GUI)
-    pdfsam-basic
+    # pdfsam-basic
     prismlauncher                         # minecraft launcher
-    qalculate-gtk                         # calculator
-    qbittorrent                           # Torrenting
+    pkgsBundle.pkgs-stable.qalculate-gtk                         # calculator
     qpwgraph                              # Audio Routing Software
-    reaper
+    # reaper
     remmina                               # RDP Client
     rpi-imager
     vcv-rack
     viewnior                              # Image Viewer
     wdisplays
-
-    opencode
-    minimax-mcp
+    winboat
 
     # CLI utils
     inputs.alejandra.defaultPackage.${myOptions.system}
@@ -70,6 +72,7 @@
     ddcutil                               # Screen brightness
     devenv
     direnv
+    docker
     dust
     entr                                  # perform action when file change
     entropy

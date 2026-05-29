@@ -7,7 +7,7 @@
   boot.tmp.cleanOnBoot = true;
 
   nix.registry = {
-    nixpkgs.flake = inputs.nixpkgs-unstable;
+    nixpkgs.flake = inputs.nixpkgs;
   };
 
   # Nix Shared Libraires

@@ -9,7 +9,6 @@
     seatd.enable = true;
     printing.enable = true;
     envfs.enable = true;
-    flatpak.enable = true;
   };
   
   environment.systemPackages = with pkgs; [gvfs];

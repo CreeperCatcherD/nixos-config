@@ -64,6 +64,7 @@
   # ];
 
   services.immich.enable = true;
+  services.immich.package = pkgsBundle.pkgs-stable.immich;
   # services.immich.package = pkgsBundle.pkgs-main.immich;
   services.immich.port = 2283;
   services.immich.host = "0.0.0.0";

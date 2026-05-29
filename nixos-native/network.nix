@@ -81,7 +81,7 @@
     settings = {
       Resolve = {
         DNS = [ "127.0.0.1:5300" ];
-        DNSStubListener = "no";
+        # DNSStubListener = "no";
         DNSSEC = "false"; # dnscrypt-proxy handles this
         Domains = [ "~ts.net" ]; # route ts.net queries separately
       };

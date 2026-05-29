@@ -1,9 +1,10 @@
-{ config, pkgs, ... }:
+{ config, pkgs, pkgsBundle, ... }:
 
 {
   programs.obs-studio = {
+    package = pkgsBundle.pkgs-stable.obs-studio;
     enable = true;
-    plugins = with pkgs.obs-studio-plugins; [
+    plugins = with pkgsBundle.pkgs-stable.obs-studio-plugins; [
       obs-backgroundremoval
       obs-source-clone
       obs-move-transition

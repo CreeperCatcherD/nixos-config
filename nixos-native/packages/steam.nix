@@ -1,7 +1,7 @@
 { pkgs, pkgsBundle, ... }:{
   programs.steam = {
     enable = true;
-    gamescopeSession.enable = true;
+    gamescopeSession.enable = false;
     package = pkgsBundle.pkgs-main.steam;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
