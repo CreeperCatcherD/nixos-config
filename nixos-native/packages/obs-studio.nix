@@ -1,9 +1,8 @@
 { config, pkgs, pkgsBundle, ... }:
-
 {
   programs.obs-studio = {
     package = pkgsBundle.pkgs-stable.obs-studio;
-    enable = true;
+    enable = false;
     plugins = with pkgsBundle.pkgs-stable.obs-studio-plugins; [
       obs-backgroundremoval
       obs-source-clone

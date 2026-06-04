@@ -1,7 +1,7 @@
 { config, pkgs, inputs, myOptions, pkgsBundle, ... }: {
   programs.firefox = {
     enable = true;
-    # package = pkgsBundle.pkgs-old.firefox;
+    package = pkgsBundle.pkgs-stable.firefox;
     nativeMessagingHosts = [pkgs.tridactyl-native];
     configPath = "${config.xdg.configHome}/mozilla/firefox";
     profiles = {

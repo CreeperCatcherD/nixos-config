@@ -4,7 +4,7 @@
     ++ [(import ./blender.nix)]
     ++ [(import ./docker.nix)]
     ++ [(import ./steam.nix)]                       # Steam integration
-    ++ [(import ./obs-studio.nix)]
+    # ++ [(import ./obs-studio.nix)]
     ++ [(import ./openrgb.nix)]           # OpenRGB for lighting control
     ++ [(import ./wireshark.nix)]
     ++ [(import ./flatpak.nix)]
@@ -59,6 +59,7 @@
 
     # CLI utils
     inputs.alejandra.defaultPackage.${myOptions.system}
+    alsa-utils
     bitwise                               # cli tool for bit / hex manipulation
     bleachbit                             # cache cleaner
     bluetuith                             # TUI for bluetooth connections
@@ -166,6 +167,7 @@
     snes9x
     # cemu
     dolphin-emu
+    pkgsBundle.pkgs-unstable.eden
   ];
 
   fonts.packages = with pkgs; [
