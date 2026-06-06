@@ -27,13 +27,19 @@
 
   networking = {
     hostName = myOptions.hostname;
-    networkmanager.enable = true;
-
-    networkmanager.plugins = with pkgs; [
-      networkmanager-openvpn
-    ];
+    networkmanager = {
+      enable = true;
+      dns = "systemd-resolved";   # <-- tell NM to use resolved
+      plugins = with pkgs; [ networkmanager-openvpn ];
+    };
     
-    nameservers = [ "8.8.8.8" "1.1.1.1" ];
+    search = [ "tailf1460c.ts.net" ];
+    nameservers = [
+      "100.100.100.100"   # Tailscale MagicDNS (also handles its own split DNS)
+      "192.168.12.101"    # Pi-hole
+      "1.1.1.1"           # fallback
+      "8.8.8.8"           # fallback
+    ];
     firewall = {
       enable = true;
       allowPing = true;
@@ -61,31 +67,37 @@
     };
   };
 
-  services.dnscrypt-proxy = {
-    enable = true;
-    settings = {
-      listen_addresses = [ "127.0.0.1:5300" ];
-      server_names = [ "cloudflare" "google" ];
-      doh_servers = true;
-      dnscrypt_servers = false;
-      ipv4_servers = true;
-      ipv6_servers = false;
-      require_dnssec = true;
-      require_nolog = true;
-    };
-  };
+  # services.dnscrypt-proxy = {
+  #   enable = true;
+  #   settings = {
+  #     listen_addresses = [ "127.0.0.1:5300" ];
+  #     server_names = [ "cloudflare" "google" ];
+  #     doh_servers = true;
+  #     dnscrypt_servers = false;
+  #     ipv4_servers = true;
+  #     ipv6_servers = false;
+  #     require_dnssec = true;
+  #     require_nolog = true;
+  #   };
+  # };
 
   # Point systemd-resolved to dnscrypt-proxy
+  # services.resolved = {
+  #   enable = true;
+  #   settings = {
+  #     Resolve = {
+  #       DNS = [ "127.0.0.1:5300" ];
+  #       # DNSStubListener = "no";
+  #       DNSSEC = "false"; # dnscrypt-proxy handles this
+  #       Domains = [ "~ts.net" ]; # route ts.net queries separately
+  #     };
+  #   };
+  # };
   services.resolved = {
     enable = true;
-    settings = {
-      Resolve = {
-        DNS = [ "127.0.0.1:5300" ];
-        # DNSStubListener = "no";
-        DNSSEC = "false"; # dnscrypt-proxy handles this
-        Domains = [ "~ts.net" ]; # route ts.net queries separately
-      };
-    };
+    dnssec = "false";
+    domains = [ "~ts.net" "~tailf1460c.ts.net" ];  # Tailscale split DNS
+    fallbackDns = [ "8.8.8.8" "1.1.1.1" ];
   };
 
   systemd.services.dnscrypt-proxy2.before = [ "nss-lookup.target" ];

@@ -2,11 +2,11 @@
   description = "My system configuration";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # nixpkgs.url = "github:NixOS/nixpkgs";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs";
     nixpkgs-super-old.url = "github:nixos/nixpkgs/nixos-21.05";
     nixpkgs-old.url = "github:nixos/nixpkgs/nixos-23.11";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-main.url = "github:NixOS/nixpkgs";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -52,8 +52,7 @@
     };
 
     stylix = {
-      # url =  "github:danth/stylix";
-      url = "github:nix-community/stylix/pull/2337/head";
+      url =  "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 

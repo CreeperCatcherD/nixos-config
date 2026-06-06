@@ -2,6 +2,8 @@
 {
   wayland.windowManager.hyprland = {
 
+    # plugins = [ pkgs.hyprlandPlugins.split-monitor-workspaces ];
+
     settings = {
       "$mainMod" = "SUPER";
 

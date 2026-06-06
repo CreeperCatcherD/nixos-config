@@ -34,7 +34,7 @@
 
   gtk = {
     enable = true;
-    gtk4.theme = null;
+    gtk4.theme = lib.mkForce null;
     
     iconTheme = lib.mkForce  {
       name = "Breeze-Dark";

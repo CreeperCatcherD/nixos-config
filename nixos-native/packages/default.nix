@@ -26,6 +26,7 @@
     # bitwig-studio
     pkgsBundle.pkgs-old.chromium          # Chromium Web Browser
     # deskflow
+    dig
     distrobox
     en-croissant
     freecad
@@ -56,6 +57,17 @@
     viewnior                              # Image Viewer
     wdisplays
     winboat
+
+    mission-center
+    mission-planner
+    freeciv
+    pharo
+    jellyfin-tui
+    jellyfin-web
+    jellyfin-desktop
+    jellycli
+    jftui
+    jellytui
 
     # CLI utils
     inputs.alejandra.defaultPackage.${myOptions.system}
