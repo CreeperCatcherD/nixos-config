@@ -34,12 +34,6 @@
     };
     
     search = [ "tailf1460c.ts.net" ];
-    nameservers = [
-      "100.100.100.100"   # Tailscale MagicDNS (also handles its own split DNS)
-      "192.168.12.101"    # Pi-hole
-      "1.1.1.1"           # fallback
-      "8.8.8.8"           # fallback
-    ];
     firewall = {
       enable = true;
       allowPing = true;
@@ -95,9 +89,15 @@
   # };
   services.resolved = {
     enable = true;
-    dnssec = "false";
-    domains = [ "~ts.net" "~tailf1460c.ts.net" ];  # Tailscale split DNS
-    fallbackDns = [ "8.8.8.8" "1.1.1.1" ];
+    settings = {
+      Resolve = {
+        # DNS = "100.100.100.100 192.168.12.101 1.1.1.1 8.8.8.8";
+        DNS = "192.168.12.101";
+        # FallbackDNS = "8.8.8.8 1.1.1.1";
+        Domains = "~ts.net ~tailf1460c.ts.net";
+        DNSSEC = "false";
+      };
+    };
   };
 
   systemd.services.dnscrypt-proxy2.before = [ "nss-lookup.target" ];

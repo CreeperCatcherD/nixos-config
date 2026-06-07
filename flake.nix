@@ -17,16 +17,12 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
       };
     };
 
     flake-utils.url = "github:numtide/flake-utils";
 
-    nix-flatpak = {
-      url = "github:gmodena/nix-flatpak";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -81,13 +77,10 @@
           screens = [
             # Left Tall
             "DP-3, 1920x1200@60, 0x0, 1"
-
             # Middle
-            "DP-2, 1920x1080@120, 1920x120, 1"
-
+            "DP-2, 1920x1080@160, 1920x120, 1"
             # Right Tall
             "DP-1, 1920x1200@60, 3840x0, 1"
-
             # TV
             "HDMI-A-1, 3840x2160@59, 5760x0, 2"
           ];
