@@ -19,5 +19,7 @@
     ++ [(import ./system.nix)]                      # Core system configurations
     ++ [(import ./user.nix)]                        # User-specific settings
     ++ [(import ./virtmanager.nix)]                 # Virt-Manager for VMs
-    ++ [(import ./vpn.nix)];                        # Tailscale VPN Config
+    ++ [(import ./vpn.nix)]                         # Tailscale VPN Config
+
+    ++ (if host == "desktop" then [(import ./jellyfin.nix)] else []);
 }

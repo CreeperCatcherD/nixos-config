@@ -1,6 +1,6 @@
-{ pkgs, ... }: 
+{ pkgsBundle, ... }: 
 {
-  home.packages = with pkgs; [
+  home.packages = with pkgsBundle.pkgs-stable; [
     (discord.override { 
       withVencord = true; 
     })

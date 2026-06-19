@@ -5,6 +5,11 @@
     user = "${myOptions.username}";
   };
 
+  services.ersatztv = {
+    enable = true;
+    user = "${myOptions.username}";
+  };
+
   # users.users.jellyfin.extraGroups = [ "users" ];
 
   environment.systemPackages = [

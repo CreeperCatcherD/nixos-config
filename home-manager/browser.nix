@@ -1,4 +1,9 @@
 { config, pkgs, inputs, myOptions, pkgsBundle, ... }: {
+
+  home.packages = [
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+  ];
+
   programs.firefox = {
     enable = true;
     package = pkgsBundle.pkgs-stable.firefox;

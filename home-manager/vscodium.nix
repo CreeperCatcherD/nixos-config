@@ -1,5 +1,7 @@
 { lib, config, pkgs, pkgsBundle, inputs, ... }:
-{    
+{
+  nixpkgs.overlays = [ inputs.nix-vscode-extensions.overlays.default ];
+
   programs.vscodium = {
     enable = true;
     #TODO Remove telemetry

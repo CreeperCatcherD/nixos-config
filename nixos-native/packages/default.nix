@@ -7,9 +7,8 @@
     # ++ [(import ./obs-studio.nix)]
     ++ [(import ./openrgb.nix)]           # OpenRGB for lighting control
     ++ [(import ./wireshark.nix)]
-    ++ [(import ./flatpak.nix)]
+    ++ [(import ./flatpak.nix)];
     # Install jellyfin on desktop
-    ++ (if host == "desktop" then [(import ./jellyfin.nix)] else []);
 
   nixpkgs.config = {
     allowUnfree = true;
@@ -53,6 +52,7 @@
     # reaper
     remmina                               # RDP Client
     rpi-imager
+    pkgsBundle.pkgs-stable.rustdesk
     vcv-rack
     viewnior                              # Image Viewer
     wdisplays
@@ -160,7 +160,6 @@
     zsh-fzf-tab
 
     # Background stuff
-    openvpn
     python315
 
     # Games

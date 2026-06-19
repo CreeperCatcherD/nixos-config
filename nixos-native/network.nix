@@ -92,8 +92,8 @@
     settings = {
       Resolve = {
         # DNS = "100.100.100.100 192.168.12.101 1.1.1.1 8.8.8.8";
-        DNS = "192.168.12.101";
-        # FallbackDNS = "8.8.8.8 1.1.1.1";
+        DNS = "192.168.12.101 1.1.1.1 8.8.8.8";
+        FallbackDNS = "8.8.8.8 1.1.1.1";
         Domains = "~ts.net ~tailf1460c.ts.net";
         DNSSEC = "false";
       };

@@ -6,9 +6,8 @@
 
   boot.tmp.cleanOnBoot = true;
 
-  nix.registry = {
-    nixpkgs.flake = inputs.nixpkgs;
-  };
+  nix.registry = lib.mapAttrs (_name: flake: { inherit flake; }) (lib.filterAttrs (n: _: n != "self") inputs);
+  nix.nixPath = lib.mapAttrsToList (name: _: "${name}=flake:${name}") (lib.filterAttrs (n: _: n != "self") inputs);
 
   # Nix Shared Libraires
   programs.nix-ld.enable = true;
@@ -107,10 +106,13 @@
     overlays = [
       #self.overlays.default
       inputs.nur.overlays.default
-      # inputs.nix-vscode-extensions.overlays.default
       inputs.nix-vscode-extensions.overlays.default
     ];
   };
+
+  systemd.tmpfiles.rules = [
+    "Z /sys/class/powercap/intel-rapl:0/energy_uj 0444 root root - -"
+  ];
   
   time.timeZone = "America/Chicago";
   i18n.defaultLocale = "en_US.UTF-8";

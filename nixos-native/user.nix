@@ -10,7 +10,7 @@
       imports = [ ./../home-manager ];
       home.username = "${myOptions.username}";
       home.homeDirectory = "/home/${myOptions.username}";
-      home.stateVersion = config.system.stateVersion ;
+      home.stateVersion = config.system.stateVersion;
       programs.home-manager.enable = true;
     };
   };
@@ -24,8 +24,7 @@
 
     users.${myOptions.username} = {
       isNormalUser = true;
-      # description = "My Silly Name Here";
-      extraGroups = [ "networkmanager" "wheel" "video" "seat" "dialout" "tty" "wireshark"]
+      extraGroups = [ "networkmanager" "wheel" "video" "seat" "dialout" "uinput" "input" "tty" "wireshark"]
       ++ (if myOptions.virtualization then ["libvirtd"] else []);
       packages = with pkgs; [];
       shell = pkgs.zsh;
