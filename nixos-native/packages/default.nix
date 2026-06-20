@@ -29,7 +29,7 @@
     distrobox
     en-croissant
     freecad
-    gimp
+    pkgsBundle.pkgs-stable.gimp
     ghidra
     google-chrome                         # Proprietary Web Browser
     gparted                               # Partition manager

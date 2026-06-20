@@ -17,7 +17,7 @@
   wayland.windowManager.hyprland = {
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     enable = true;
-    # configType = "hyprlang";
+    configType = "hyprlang";
     xwayland = {
       enable = true;
       # hidpi = true;
