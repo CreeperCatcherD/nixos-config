@@ -146,6 +146,7 @@
     waypaper
     waypipe
     wayvnc
+    wev
     wgcf
     wget
     wiremix                               # 

@@ -1,358 +1,302 @@
-{ config, lib, myOptions, pkgs, ... }: 
+{ config, inputs, lib, myOptions, pkgs, ... }: 
+let
+  parseMonitor = str:
+    let
+      parts = builtins.filter (x: builtins.isString x && x != "") (builtins.split ",[[:space:]]*" str);
+    in
+    {
+      _args = [
+        {
+          output = builtins.elemAt parts 0;      # Changed from name to output
+          mode = builtins.elemAt parts 1;
+          position = builtins.elemAt parts 2;
+          scale = builtins.elemAt parts 3;
+        }
+      ];
+    };
+in
 {
   wayland.windowManager.hyprland = {
+    enable = true;
+    configType = "lua";
 
-    # plugins = [ pkgs.hyprlandPlugins.split-monitor-workspaces ];
+    plugins = [
+      inputs.split-monitor-workspaces.packages.${pkgs.stdenv.hostPlatform.system}.split-monitor-workspaces
+      # inputs.hyprgrass.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ];
 
     settings = {
-      "$mainMod" = "SUPER";
+      mainMod = {
+        _var = "SUPER";
+      };
 
-      # "plugin:touch_gestures" = {
-      #   # The default sensitivity is probably too low on tablet screens,
-      #   # I recommend turning it up to 4.0
-      #   sensitivity = 1.0;
+      # Global plugin configuration paths
+      "config.plugin.split_monitor_workspaces.monitor_priority" = [
+        { _args = [ [ "DP-1" "DP-2" ] ]; }
+      ];
 
-      #   # must be >= 3
-      #   workspace_swipe_fingers = 3;
+      "config.plugin.split_monitor_workspaces.max_workspaces" = [
+        { _args = [ { monitor = "DP-1"; max = 9; } ]; }
+        { _args = [ { monitor = "DP-2"; max = 5; } ]; }
+      ];
 
-      #   # switching workspaces by swiping from an edge, this is separate from workspace_swipe_fingers
-      #   # and can be used at the same time
-      #   # possible values: l, r, u, or d
-      #   # to disable it set it to anything else
-      #   workspace_swipe_edge = "d";
+      # monitor = [] ++ myOptions.screens ++ [ ",preferred,auto,1" ];
+      monitor = (builtins.map parseMonitor myOptions.screens) ++ [
+        { _args = [ { output = ""; mode = "preferred"; position = "auto"; scale = "1"; } ]; }
+      ];
 
-      #   # in milliseconds
-      #   long_press_delay = 400;
+      env = [
+        { _args = [ "XDG_CURRENT_DESKTOP" "Hyprland" ]; }
+        { _args = [ "XDG_SESSION_TYPE" "wayland" ]; }
+        { _args = [ "XDG_SESSION_DESKTOP" "Hyprland" ]; }
+        { _args = [ "XCURSOR_SIZE" "36" ]; }
+        { _args = [ "XDG_SCREENSHOTS_DIR" "~/Pictures/Screenshots" ]; }
+      ];
+      
+      # debug = {
+      #   disable_logs = false;
+      #   enable_stdout_logs = true;
+      #   disable_scale_checks = true;
+      # };
 
-      #   # in pixels, the distance from the edge that is considered an edge
-      #   edge_margin = 10;
+      # input = {
+      #   kb_layout = "us";
+      #   kb_variant = "";
+      #   kb_options = "";
+      #   follow_mouse = 1;
+      #   touchpad = {
+      #     natural_scroll = true;
+      #   };
+      #   sensitivity = 0;
+      # };
 
-      #   experimental = {
-      #     # send proper cancel events to windows instead of hacky touch_up events,
-      #     # NOT recommended as it crashed a few times, once it's stabilized I'll make it the default
-      #     send_cancel = 0;
+      # general = {
+      #   gaps_in = 5;
+      #   gaps_out = 18;
+      #   border_size = 3;
+        
+      #   "col.active_border" = let
+      #     accentColor1 = config.lib.stylix.colors.base0D;
+      #     accentColor2 = config.lib.stylix.colors.base0B;
+      #   in lib.mkForce "rgb(${accentColor1}) rgb(${accentColor2}) rgb(${accentColor1}) 45deg";
+
+      #   "col.inactive_border" = let
+      #     inactiveColor = config.lib.stylix.colors.base03;
+      #   in lib.mkForce "rgb(${inactiveColor})";
+
+      #   layout = "dwindle";
+      # };
+
+      # decoration = {
+      #   rounding = 10;
+      #   blur = {
+      #     enabled = true;
+      #     size = 2;
+      #     passes = 2;
+      #     new_optimizations = true;
       #   };
       # };
 
-      monitor = [] ++ myOptions.screens ++ [ ",preferred,auto,1" ];
-
-      env = [
-        "XDG_CURRENT_DESKTOP,Hyprland"
-        "XDG_SESSION_TYPE,wayland"
-        "XDG_SESSION_DESKTOP,Hyprland"
-        "XCURSOR_SIZE,36"
-        # "QT_QPA_PLATFORM,wayland"
-        "XDG_SCREENSHOTS_DIR,~/Pictures/Screenshots"
-      ];
-
-      debug = {
-        disable_logs = false;
-        enable_stdout_logs = true;
-        # For fractional scaling
-        disable_scale_checks = true;
-      };
-
-      input = {
-        kb_layout = "us";
-        kb_variant = "";
-        kb_options = "";
-
-        follow_mouse = 1;
-
-        touchpad = {
-          natural_scroll = true;
-        };
-
-        sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
-      };
-
-      general = let
-        toHyprlandRGBA = colorHex: alpha: "${(builtins.substring 1 (builtins.stringLength colorHex - 1) colorHex)}${alpha}";
-        in {
-        gaps_in = 5;
-        gaps_out = 18;
-        border_size = 3;
-        
-        # "col.inactive_border" = "rgba(00000000)";
-
-        # Convert hex color to string without '#' and append alpha
-        # Function to clean color string and add alpha
-        
-        # Example: Using base0D (blue) for active, base00 (background) for inactive
-        "col.active_border" = let
-          accentColor1 = config.lib.stylix.colors.base0D;
-          accentColor2 = config.lib.stylix.colors.base0B;
-        in lib.mkForce "rgb(${accentColor1}) rgb(${accentColor2}) rgb(${accentColor1}) 45deg";
-
-        "col.inactive_border" = let
-          inactiveColor = config.lib.stylix.colors.base03; # D # Example: background color
-        in lib.mkForce "rgb(${inactiveColor})";
-
-        layout = "dwindle";
-
-        #no_cursor_warps = false;
-      };
-
-      decoration = {
-        rounding = 10;
-
-        blur = {
-          enabled = true;
-          size = 2;
-          passes = 2;
-          new_optimizations = true;
-        };
-
-        # drop_shadow = true;
-        # shadow_range = 4;
-        # shadow_render_power = 3;
-        # "col.shadow" = "rgba(1a1a1aee)";
-      };
-
-      animations = {
-        enabled = true;
-
-        # bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
-        # bezier = "myBezier, 0.33, 0.82, 0.9, -0.08";
-        bezier = "myBezier, 0.1, 0.9, 0.1, 1.1";
-
-        animation = [
-          "windows,     1, 7,  myBezier"
-          "windowsOut,  1, 7,  default, popin 80%"
-          "border,      1, 10, default"
-          "borderangle, 1, 8,  default"
-          "fade,        1, 7,  default"
-          "workspaces,  1, 6,  default"
-        ];
-      };
-
-      dwindle = {
-        # pseudotile = true; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
-        preserve_split = true; # you probably want this
-      };
-
-      master = {
-        new_status = "master";
-      };
-      
-      #TODO Fix Gestures
-      # gestures = {
-      #   workspace_swipe = true;
-      #   workspace_swipe_fingers = 3;
-      #   workspace_swipe_invert = false;
-      #   workspace_swipe_distance = 200;
-      #   workspace_swipe_forever = true;
+      # animations = {
+      #   enabled = true;
+      #   bezier = "myBezier, 0.1, 0.9, 0.1, 1.1";
+      #   animation = [
+      #     "windows,     1, 7,  myBezier"
+      #     "windowsOut,  1, 7,  default, popin 80%"
+      #     "border,      1, 10, default"
+      #     "borderangle, 1, 8,  default"
+      #     "fade,        1, 7,  default"
+      #     "workspaces,  1, 6,  default"
+      #   ];
       # };
 
-      misc = {
-        animate_manual_resizes = true;
-        animate_mouse_windowdragging = true;
-        enable_swallow = true;
-        # render_ahead_of_time = false;
-        disable_hyprland_logo = true;
-        enable_anr_dialog = false;
-      };
+      # dwindle = {
+      #   preserve_split = true;
+      # };
 
-      # autostart
-      exec-once = [
+      # master = {
+      #   new_status = "master";
+      # };
+      
+      # misc = {
+      #   animate_manual_resizes = true;
+      #   animate_mouse_windowdragging = true;
+      #   enable_swallow = true;
+      #   disable_hyprland_logo = true;
+      #   enable_anr_dialog = false;
+      # };
+
+      # Converted from exec-once list into hl.exec_cmd(...) syntax using _args
+      exec_cmd = map (cmd: { _args = [ cmd ]; }) ([
         "systemctl --user import-environment &"
         "hash dbus-update-activation-environment 2>/dev/null &"
         "dbus-update-activation-environment --systemd &"
         "nm-applet &"
         "swaybg -m fill -i $(find ~/Pictures/wallpapers/ -maxdepth 1 -type f) &"
         "sleep 1 && swaylock"
-        # "hyprctl setcursor Nordzy-cursors 22 &"
         "poweralertd &"
         "waybar &"
         "mako &"
         "wl-paste -t text --watch cliphist store &"
         "wl-paste -p -t text --watch cliphist store &"
         "wl-paste -p --watch xclip -i -selection primary &"
-      ] ++ (if myOptions.enable-rgb-lights then ["(sleep 6 && openrgb --startminimized) &"] else []);
-
+      ] ++ (if myOptions.enable-rgb-lights then ["(sleep 6 && openrgb --startminimized) &"] else []));
 
       bind = [
-        "$mainMod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + V"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("cliphist list | wofi --dmenu | cliphist decode | wl-copy")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + Return"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("kitty")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + Q"'') (lib.generators.mkLuaInline ''hl.dsp.window.kill()'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + A"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("hyprctl reload")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + R"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("obsidian")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + C"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("codium")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + E"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("nemo ~")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + G"'') (lib.generators.mkLuaInline ''hl.dsp.window.float({})'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + F"'') (lib.generators.mkLuaInline ''hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + D"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("wofi --show drun")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + P"'') (lib.generators.mkLuaInline ''hl.dsp.window.pseudo({})'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + P"'') (lib.generators.mkLuaInline ''hl.dsp.window.pin({})'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + T"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("kitty")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + L"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("swaylock")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + S"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("firefox")'') ]; }
 
-        "$mainMod, Return, exec, kitty"
-        "$mainMod, Q, killactive,"
-        # "$mainMod, M, exit,"
-        "$mainMod, A, exec, hyprctl reload"
-        "$mainMod, R, exec, obsidian"
-        "$mainMod, C, exec, codium"
-        "$mainMod, E, exec, nemo ~"
-        "$mainMod, G, togglefloating,"
-        "$mainMod, F, fullscreenstate, 2"
-        "$mainMod, D, exec, wofi --show drun"
-        "$mainMod, P, pseudo, # dwindle"
-        "$mainMod SHIFT, P, pin"
-        # "$mainMod, J, togglesplit, # dwindle"
-        "$mainMod, T, exec, kitty"
-        "$mainMod, L, exec, swaylock"
-        "$mainMod, S, exec, firefox"
+        # { _args = [ "ALT + Tab" (lib.generators.mkLuaInline ''hl.dsp.window.center({})'') ]; }
+        # { _args = [ "ALT + Tab" (lib.generators.mkLuaInline ''hl.dsp.window.cycle_next({})'') ]; }
+        # { _args = [ "ALT + SHIFT + Tab" (lib.generators.mkLuaInline ''hl.dsp.window.cycle_next({ next = false })'') ]; }
 
-        # Cycle through windows
-        "ALT, Tab, bringactivetotop,"
-        "ALT, Tab, cyclenext,"
-        "ALT SHIFT, Tab, cyclenext, prev"
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + left"'') (lib.generators.mkLuaInline ''hl.dsp.focus({ direction = "l" })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + right"'') (lib.generators.mkLuaInline ''hl.dsp.focus({ direction = "r" })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + up"'') (lib.generators.mkLuaInline ''hl.dsp.focus({ direction = "u" })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + down"'') (lib.generators.mkLuaInline ''hl.dsp.focus({ direction = "d" })'') ]; }
 
-        # Move focus with mainMod + arrow keys
-        "$mainMod, left,  movefocus, l"
-        "$mainMod, right, movefocus, r"
-        "$mainMod, up,    movefocus, u"
-        "$mainMod, down,  movefocus, d"
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + left"'') (lib.generators.mkLuaInline ''hl.dsp.window.swap({ direction = "l" })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + right"'') (lib.generators.mkLuaInline ''hl.dsp.window.swap({ direction = "r" })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + up"'') (lib.generators.mkLuaInline ''hl.dsp.window.swap({ direction = "u" })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + down"'') (lib.generators.mkLuaInline ''hl.dsp.window.swap({ direction = "d" })'') ]; }
 
-        # Moving windows
-        "$mainMod SHIFT, left,  swapwindow, l"
-        "$mainMod SHIFT, right, swapwindow, r"
-        "$mainMod SHIFT, up,    swapwindow, u"
-        "$mainMod SHIFT, down,  swapwindow, d"
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + 1"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"1*\") --no-video")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + 2"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"2*\") --no-video")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + 3"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"3*\") --no-video")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + 4"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"4*\") --no-video")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + 5"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"5*\") --no-video")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + 6"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"6*\") --no-video")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + 7"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"7*\") --no-video")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + 8"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"8*\") --no-video")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + 9"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"9*\") --no-video")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + 0"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pkill mpv")'') ]; }
 
-        # Audio clip hotkeys
-        "$mainMod ALT, 1, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"1*\") --no-video"
-        "$mainMod ALT, 2, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"2*\") --no-video"
-        "$mainMod ALT, 3, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"3*\") --no-video"
-        "$mainMod ALT, 4, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"4*\") --no-video"
-        "$mainMod ALT, 5, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"5*\") --no-video"
-        "$mainMod ALT, 6, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"6*\") --no-video"
-        "$mainMod ALT, 7, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"7*\") --no-video"
-        "$mainMod ALT, 8, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"8*\") --no-video"
-        "$mainMod ALT, 9, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"9*\") --no-video"
-        "$mainMod ALT, 0, exec, pkill mpv"
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + CTRL + left"'') (lib.generators.mkLuaInline ''hl.dsp.window.resize({ x = -60, y = 0, relative = true })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + CTRL + right"'') (lib.generators.mkLuaInline ''hl.dsp.window.resize({ x = 60, y = 0, relative = true })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + CTRL + up"'') (lib.generators.mkLuaInline ''hl.dsp.window.resize({ x = 0, y = -60, relative = true })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + CTRL + down"'') (lib.generators.mkLuaInline ''hl.dsp.window.resize({ x = 0, y = 60, relative = true })'') ]; }
 
-        # Window resizing                     X  Y
-        "$mainMod CTRL, left,  resizeactive, -60 0"
-        "$mainMod CTRL, right, resizeactive,  60 0"
-        "$mainMod CTRL, up,    resizeactive,  0 -60"
-        "$mainMod CTRL, down,  resizeactive,  0  60"
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + 1"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.workspace(1)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + 2"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.workspace(2)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + 3"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.workspace(3)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + 4"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.workspace(4)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + 5"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.workspace(5)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + 6"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.workspace(6)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + 7"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.workspace(7)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + 8"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.workspace(8)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + 9"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.workspace(9)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + 0"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.workspace(10)) end'') ]; }
 
-        # Switch workspaces with mainMod + [0-9]
-        "$mainMod, 1, split-workspace, 1"
-        "$mainMod, 2, split-workspace, 2"
-        "$mainMod, 3, split-workspace, 3"
-        "$mainMod, 4, split-workspace, 4"
-        "$mainMod, 5, split-workspace, 5"
-        "$mainMod, 6, split-workspace, 6"
-        "$mainMod, 7, split-workspace, 7"
-        "$mainMod, 8, split-workspace, 8"
-        "$mainMod, 9, split-workspace, 9"
-        "$mainMod, 0, split-workspace, 10"
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + 1"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.move_to_workspace_silent(1)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + 2"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.move_to_workspace_silent(2)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + 3"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.move_to_workspace_silent(3)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + 4"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.move_to_workspace_silent(4)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + 5"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.move_to_workspace_silent(5)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + 6"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.move_to_workspace_silent(6)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + 7"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.move_to_workspace_silent(7)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + 8"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.move_to_workspace_silent(8)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + 9"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.move_to_workspace_silent(9)) end'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + 0"'') (lib.generators.mkLuaInline ''function() return hl.dispatch(hl.plugin.split_monitor_workspaces.move_to_workspace_silent(10)) end'') ]; }
 
-        # Move active window to a workspace with mainMod + SHIFT + [0-9]
-        "$mainMod SHIFT, 1, split-movetoworkspacesilent, 1"
-        "$mainMod SHIFT, 2, split-movetoworkspacesilent, 2"
-        "$mainMod SHIFT, 3, split-movetoworkspacesilent, 3"
-        "$mainMod SHIFT, 4, split-movetoworkspacesilent, 4"
-        "$mainMod SHIFT, 5, split-movetoworkspacesilent, 5"
-        "$mainMod SHIFT, 6, split-movetoworkspacesilent, 6"
-        "$mainMod SHIFT, 7, split-movetoworkspacesilent, 7"
-        "$mainMod SHIFT, 8, split-movetoworkspacesilent, 8"
-        "$mainMod SHIFT, 9, split-movetoworkspacesilent, 9"
-        "$mainMod SHIFT, 0, split-movetoworkspacesilent, 10"
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + mouse:276"'') (lib.generators.mkLuaInline ''hl.dsp.focus({ workspace = "e+1" })'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + mouse:275"'') (lib.generators.mkLuaInline ''hl.dsp.focus({ workspace = "e-1" })'') ]; }
 
-        # Scroll through existing workspaces with mainMod + side buttons
-        # "$mainMod, mouse_down, workspace, e+1"
-        # "$mainMod, mouse_up, workspace, e-1"
-        "$mainMod, mouse:276, workspace, e+1"
-        "$mainMod, mouse:275, workspace, e-1"
-        #"$mainMod SHIFT, mouse:276, workspace, e+5"
-        #"$mainMod SHIFT, mouse:275, workspace, e-5"
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + F3"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("brightnessctl -d *::kbd_backlight set +33%")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + F2"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("brightnessctl -d *::kbd_backlight set 33%-")'') ]; }
 
-        # Keyboard backlight
-        "$mainMod, F3, exec, brightnessctl -d *::kbd_backlight set +33%"
-        "$mainMod, F2, exec, brightnessctl -d *::kbd_backlight set 33%-"
-
-        # Volume and Media Control
-        ", XF86AudioRaiseVolume, exec, pamixer -i 5 "
-        ", XF86AudioLowerVolume, exec, pamixer -d 5 "
-        ", XF86AudioMute, exec, pamixer -t"
-        ", XF86AudioMicMute, exec, pamixer --default-source --toggle-mute"
-        ", XF86AudioPlayPause, exec, playerctl --all-players play-pause"
-        ", XF86AudioPlay, exec, playerctl --all-players play-pause"
-        ", XF86AudioPause, exec, playerctl --all-players play-pause"
-        ", XF86AudioNext, exec, playerctl next"
-        ", XF86AudioPrev, exec, playerctl previous"
-        "$mainMod ALT, right, exec, pamixer -t"
-        "$mainMod ALT, up, exec, pamixer -i 5"
-        "$mainMod ALT, down, exec, pamixer -d 5"
-        "$mainMod ALT, left, exec, playerctl --all-players play-pause"
-        "$mainMod ALT, m, exec, pamixer --default-source --toggle-mute"
-        "$mainMod ALT CTRL, right, exec, playerctl next"
-        "$mainMod ALT CTRL, left, exec, playerctl previous"
-        "$mainMod S, mouse_down, exec, pamixer -i 5"
-        "$mainMod S, mouse_up, exec, pamixer -d 5"
+        { _args = [ "XF86AudioRaiseVolume" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pamixer -i 5")'') ]; }
+        { _args = [ "XF86AudioLowerVolume" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pamixer -d 5")'') ]; }
+        { _args = [ "XF86AudioMute" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pamixer -t")'') ]; }
+        { _args = [ "XF86AudioMicMute" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pamixer --default-source --toggle-mute")'') ]; }
+        # { _args = [ "XF86AudioPlayPause" (lib.generators.mkLuaInline ''function() hl.dsp.exec_cmd("playerctl --all-players play-pause") end'') ]; }
+        { _args = [ "XF86AudioPlay" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("playerctl --all-players play-pause")'') ]; }
+        { _args = [ "XF86AudioPause" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("playerctl --all-players play-pause")'') ]; }
+        { _args = [ "XF86AudioNext" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("playerctl next")'') ]; }
+        { _args = [ "XF86AudioPrev" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("playerctl previous")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + right"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pamixer -t")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + up"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pamixer -i 5")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + down"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pamixer -d 5")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + left"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("playerctl --all-players play-pause")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + m"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pamixer --default-source --toggle-mute")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + CTRL + right"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("playerctl next")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + ALT + CTRL + left"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("playerctl previous")'') ]; }
+        # { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + S + mouse_down"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pamixer -i 5")'') ]; }
+        # { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + S + mouse_up"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pamixer -d 5")'') ]; }
         
-        # Brightness control
-        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
-        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
+        { _args = [ "XF86MonBrightnessDown" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("brightnessctl set 5%-")'') ]; }
+        { _args = [ "XF86MonBrightnessUp" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("brightnessctl set 5%+")'') ]; }
 
-        # Configuration files
-        # ''$mainMod SHIFT, N, exec, alacritty -e sh -c "rb"''
-        # ''$mainMod SHIFT, C, exec, alacritty -e sh -c "conf"''
-        # ''$mainMod SHIFT, H, exec, alacritty -e sh -c "codium ~/nix/home-manager/modules/wms/hyprland.nix"''
-        # ''$mainMod SHIFT, W, exec, alacritty -e sh -c "codium ~/nix/home-manager/modules/wms/waybar.nix''
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + B"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pkill -SIGUSR1 waybar")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + W"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pkill -SIGUSR2 waybar")'') ]; }
 
-        # Waybar
-        "$mainMod, B, exec, pkill -SIGUSR1 waybar"
-        "$mainMod, W, exec, pkill -SIGUSR2 waybar"
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + G"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("~/.config/hypr/gamemode.sh")'') ]; }
 
-        # Disable all effects
-        "$mainMod Shift, G, exec, ~/.config/hypr/gamemode.sh "
+        { _args = [ "Print" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | swappy -f -")'') ]; }
+        { _args = [ "CTRL + Print" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy")'') ]; }
+        { _args = [ "SHIFT + Print" (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("grim -g \"$(slurp)\" - $(find $HOME -name Pictures -maxdepth 1)/Screenshots/$(date +'%s_grim.png')")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + CTRL + C"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("grim \"/home/nixuser/Pictures/Cheat/$(date +'%Y-%m-%d_%H-%M-%S_full.png')\"")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + C"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("LATEST_FILE=$(ls -1 /home/nixuser/tmp/laptop/Pictures/Cheat/*.png 2>/dev/null | tail -n 1) && cat \"$LATEST_FILE\" | wl-copy --type \"$(file -b --mime-type \"$LATEST_FILE\")\"")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + CTRL + C"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("(mkdir -p /home/nixuser/Pictures/Cheat && while true; do grim \"/home/nixuser/Pictures/Cheat/$(date +'%Y-%m-%d_%H-%M-%S_full.png')\"; sleep 30; done)")'') ]; }
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + T"'') (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("pkill -f 'grim /home/nixuser/Pictures/Cheat'")'') ]; }
 
-        # Screenshots
-        #, print, exec, $HOME/.config/hypr/scripts/screenshots/captureAll.sh
-        #CTRL, print, exec, $HOME/.config/hypr/scripts/screenshots/captureScreen.sh
-        #CTRL SHIFT, print, exec, $HOME/.config/hypr/scripts/screenshots/captureArea.sh
+        { _args = [ (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + V"'') (lib.generators.mkLuaInline ''hl.dsp.submap("vnc")'') ]; }
 
-        # Screenshots
-        '', Print, exec, grim -g "$(slurp)" - | swappy -f -''
-        ''CTRL, Print, exec, grim -g "$(slurp)" - | wl-copy''
-        ''SHIFT, Print, exec, grim -g "$(slurp)" - $(find $HOME -name Pictures -maxdepth 1)/Screenshots/$(date +'%s_grim.png')''
-        "$mainMod CTRL, C, exec, grim \"/home/nixuser/Pictures/Cheat/$(date +'%Y-%m-%d_%H-%M-%S_full.png')\""
-        "$mainMod SHIFT, C, exec, LATEST_FILE=$(ls -1 /home/nixuser/tmp/laptop/Pictures/Cheat/*.png 2>/dev/null | tail -n 1) && cat \"$LATEST_FILE\" | wl-copy --type \"$(file -b --mime-type \"$LATEST_FILE\")\""
-        "$mainMod SHIFT CTRL, C, exec, (mkdir -p /home/nixuser/Pictures/Cheat && while true; do grim \"/home/nixuser/Pictures/Cheat/$(date +'%Y-%m-%d_%H-%M-%S_full.png')\"; sleep 30; done) &"
-        "$mainMod SHIFT, T, exec, pkill -f 'grim /home/nixuser/Pictures/Cheat'"
-        # ", print, exec, $(find $HOME -name Pictures -maxdepth 1)/Screenshots/$(date +'%s_grim.png')"
-        # "CTRL, print, exec, grim -g \"$(slurp -o)\" $(find $HOME -name Pictures -maxdepth 1)/Screenshots/$(date +'%s_grim.png')"
-        # "CTRL SHIFT, print, exec, grim -g \"$(slurp)\" $(find $HOME -name Pictures -maxdepth 1)/Screenshots/$(date +'%s_grim.png')"
-        # ", print, exec, grim ~/Screenshots/$(date +'%s_grim.png')"
-        # # ", print, exec, kitty"
-        # "CTRL, print, exec, grim -g \"$(slurp -o)\" $(xdg-user-dir Pictures)/Screenshots/$(date +'%s_grim.png')"
-        # "CTRL SHIFT, print, exec, grim -g \"$(slurp)\" $(xdg-user-dir Pictures)/Screenshots/$(date +'%s_grim.png')"
+        { 
+          _args = [ 
+            (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + CTRL + O"'') 
+            (lib.generators.mkLuaInline ''function() hl.dsp.exec_cmd("(swaylock & (sleep 0.01 && systemctl suspend))") end'') 
+          ];
+          flags = { locked = true; }; # Home Manager translates this attribute to the Lua config flags
+        }
+        { 
+          _args = [ 
+            (lib.generators.mkLuaInline ''mainMod .. " + O"'') 
+            (lib.generators.mkLuaInline ''function() hl.dsp.dpms({ action = "disable" }) end'') 
+          ];
+          flags = { locked = true; };
+        }
+        { 
+          _args = [ 
+            (lib.generators.mkLuaInline ''mainMod .. " + SHIFT + O"'') 
+            (lib.generators.mkLuaInline ''function() hl.dsp.dpms({ action = "enable" }) end'') 
+          ];
+          flags = { locked = true; };
+        }
 
-        "$mainMod SHIFT, V, submap, vnc"
-      ];
-
-      # Move/resize windows with mainMod + LMB/RMB and dragging
-      bindm = [
-        "$mainMod, mouse:272, movewindow"
-        "$mainMod, mouse:273, resizewindow"
-      ];
-
-      bindl = [
-        # Screen and sleep hotkeys
-        "$mainMod SHIFT CTRL, O, exec, (swaylock & (sleep 0.01 && systemctl suspend))"
-        # "$mainMod, O, exec,  hyprctl dispatch dpms off"
-        # "$mainMod SHIFT, O, exec,  hyprctl dispatch dpms on"
-        # "$mainMod, O, exec, ${
-        #   pkgs.writeShellScriptBin "dpms-toggle-ephemeral" (
-        #     # 1. Read the script content from the external file
-        #     builtins.readFile ../scripts/dpms_toggle.sh
-        #   )
-        # }/bin/dpms-toggle-ephemeral"
-        "$mainMod, O, exec,  hyprctl dispatch dpms off"
-        "$mainMod SHIFT, O, exec,  hyprctl dispatch dpms on"
+        { 
+          _args = [ 
+            (lib.generators.mkLuaInline ''mainMod .. " + mouse:272"'')
+            (lib.generators.mkLuaInline ''function() hl.dsp.window.drag() end'')
+          ];
+          flags = { mouse = true; };
+        }
+        { 
+          _args = [ 
+            (lib.generators.mkLuaInline ''mainMod .. " + mouse:273"'')
+            (lib.generators.mkLuaInline ''function() hl.dsp.window.resize() end'')
+          ];
+          flags = { mouse = true; };
+        }
       ];
     };
-    # Use extraConfig to define the submaps with raw Hyprland syntax
-    # This is a string, not a Nix attribute set.
-    extraConfig = ''
-      submap = vnc
-      # Only this keybind works while in the VNC submap.
-      # Press Super+V again to exit the submap.
-      bind = $mainMod SHIFT, V, submap, reset
 
-      submap = reset
-    '';
+    # extraConfig = ''
+    #   submap = vnc
+    #   bind = $mainMod SHIFT, V, submap, reset
+    #   submap = reset
+    # '';
   };
 }

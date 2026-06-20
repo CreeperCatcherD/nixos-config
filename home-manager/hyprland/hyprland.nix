@@ -15,17 +15,15 @@
 
   systemd.user.targets.hyprland-session.Unit.Wants = [ "xdg-desktop-autostart.target" ];
   wayland.windowManager.hyprland = {
+    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     enable = true;
-    configType = "hyprlang";
+    # configType = "hyprlang";
     xwayland = {
       enable = true;
       # hidpi = true;
     };
     # enableNvidiaPatches = false;
     systemd.enable = true;
-    plugins = [
-      inputs.split-monitor-workspaces.packages.${pkgs.stdenv.hostPlatform.system}.split-monitor-workspaces
-      # inputs.hyprgrass.packages.${pkgs.stdenv.hostPlatform.system}.default
-    ];
+    
   };
 }
