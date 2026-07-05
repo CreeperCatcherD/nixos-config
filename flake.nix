@@ -44,12 +44,18 @@
     };
     split-monitor-workspaces = {
       url = "git+https://github.com/Duckonaut/split-monitor-workspaces?ref=refs/tags/v0.55.4";
+      # url = "github:Duckonaut/split-monitor-workspaces";
       inputs.hyprland.follows = "hyprland";
     };
 
     stylix = {
       url =  "github:danth/stylix";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nur.url = "github:nix-community/NUR";

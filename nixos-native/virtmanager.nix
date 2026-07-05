@@ -19,9 +19,9 @@
 
   virtualisation.waydroid.enable = true;
 
-  networking.firewall.trustedInterfaces = [ "waydroid0" ];
+  networking.firewall.trustedInterfaces = [ "waydroid0" "virbr0" ];
   boot.kernelModules = [ "binder_linux" "ashmem_linux" ];
-  networking.nftables.enable = true;
+  # networking.nftables.enable = true;
 
   environment.systemPackages = [
     pkgs.virt-viewer

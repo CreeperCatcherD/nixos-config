@@ -1,9 +1,9 @@
-{ pkgs, ... }: 
+{ pkgs, host, ... }: 
 {
   services = {
     dbus.enable = true;
     fstrim.enable = true;
-    fwupd.enable = true;
+    fwupd.enable = (host == "framework1");
     gnome.gnome-keyring.enable = false;
     gvfs.enable = true;
     seatd.enable = true;

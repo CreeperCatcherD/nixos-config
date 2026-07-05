@@ -19,10 +19,6 @@
   environment.systemPackages = with pkgs; [
     # Desktop apps
     arduino-ide                           # Arduino IDE
-    # audio-recorder
-    # Replaced with the flatpak
-    # (pkgsBundle.pkgs-main.bambu-studio.override { withNvidiaGLWorkaround = myOptions.enable-nvidia-gpu; })
-    # bitwig-studio
     pkgsBundle.pkgs-old.chromium          # Chromium Web Browser
     # deskflow
     dig
@@ -32,20 +28,21 @@
     pkgsBundle.pkgs-stable.gimp
     ghidra
     google-chrome                         # Proprietary Web Browser
+    gnome-sound-recorder
     gparted                               # Partition manager
     kicad
     libreoffice
     linux-wifi-hotspot                    # GUI hotspot creator
     lmstudio                              # GUI LLM interface
+    mission-center
+    mission-planner
+    musescore
     nemo                                  # file manager
     nwg-look                              # GTK Config editor
     obsidian                              # Notetaking software
-    # ollama                                # LLM Backend
     opencode
-    # openrocket                            # Rocket Simulator
     # orca-slicer                           # 3D Printer Slicer
     pavucontrol                           # pulseaudio volume controle (GUI)
-    # pdfsam-basic
     prismlauncher                         # minecraft launcher
     pkgsBundle.pkgs-stable.qalculate-gtk                         # calculator
     qpwgraph                              # Audio Routing Software
@@ -57,17 +54,6 @@
     viewnior                              # Image Viewer
     wdisplays
     winboat
-
-    mission-center
-    mission-planner
-    freeciv
-    pharo
-    jellyfin-tui
-    jellyfin-web
-    jellyfin-desktop
-    jellycli
-    jftui
-    jellytui
 
     # CLI utils
     inputs.alejandra.defaultPackage.${myOptions.system}
@@ -111,6 +97,7 @@
     lavat
     libcaca
     libnotify
+    localsend
     lux                                   # Video Downloader
     mediainfo                             # Video file info
     mpv                                   # vide player
@@ -183,6 +170,8 @@
   ];
 
   fonts.packages = with pkgs; [
+    pkgsBundle.pkgs-old.nerdfonts
+    (pkgsBundle.pkgs-old.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
     jetbrains-mono
     noto-fonts
     # noto-fonts-emoji

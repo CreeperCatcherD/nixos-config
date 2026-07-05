@@ -1,6 +1,11 @@
 { lib, config, pkgs, pkgsBundle, inputs, ... }:
+
+let
+  pkgs-vscode = pkgs.extend (inputs.nix-vscode-extensions.overlays.default);
+in
+
 {
-  nixpkgs.overlays = [ inputs.nix-vscode-extensions.overlays.default ];
+  # nixpkgs.overlays = [ inputs.nix-vscode-extensions.overlays.default ];
 
   programs.vscodium = {
     enable = true;

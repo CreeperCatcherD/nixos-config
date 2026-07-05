@@ -2,10 +2,6 @@
 {
   fonts.fontconfig.enable = true;
   home.packages = [
-    pkgsBundle.pkgs-old.nerdfonts
-    (pkgsBundle.pkgs-old.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-    # pkgsBundle.pkgs-old.twemoji-color-font
-
     pkgs.libsForQt5.qt5ct
     pkgs.qt6Packages.qt6ct
     pkgs.kdePackages.breeze-gtk
