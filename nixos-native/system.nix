@@ -4,6 +4,10 @@
     inputs.nix-index-database.nixosModules.nix-index 
   ];
 
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-40.10.5"
+  ];
+
   boot.tmp.cleanOnBoot = true;
 
   nix.registry = lib.mapAttrs (_name: flake: { inherit flake; }) (lib.filterAttrs (n: _: n != "self") inputs);

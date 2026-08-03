@@ -1,4 +1,4 @@
-{ pkgs, myOptions, ... }: 
+{ pkgs, pkgsBundle, myOptions, ... }: 
 {
   services = {
   
@@ -38,11 +38,11 @@
     enable = true;
     # wlr.enable = true;
     # xdgOpenUsePortal = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal
-      pkgs.xdg-desktop-portal-wlr
-      pkgs.xdg-desktop-portal-hyprland
-      pkgs.xdg-desktop-portal-gtk
+    extraPortals = with pkgsBundle.pkgs-unstable; [
+      xdg-desktop-portal
+      xdg-desktop-portal-wlr
+      xdg-desktop-portal-hyprland
+      xdg-desktop-portal-gtk
       # pkgs.xdg-desktop-portal-gnome
     ];
   };

@@ -6,13 +6,13 @@
     ++ [(import ./btop.nix)]                      # resouces monitor 
     ++ [(import ./cava.nix)]                      # audio visualizer
     ++ [(import ./discord.nix)]                   # discord with catppuccin theme
-    ++ [(import ./fastfetch.nix)]                 # fastfetch config
+    ++ [(import ./fastfetch)]                 # fastfetch config
     ++ [(import ./git.nix)]                       # version control
     ++ [(import ./gtk.nix)]                       # gtk theme
     ++ [(import ./hyprland)]                      # window manager
     ++ [(import ./hypridle.nix)]                  # idle
     ++ [(import ./kitty.nix)]                     # terminal
-    ++ [(import ./mako.nix)]                      # notification deamon
+    # ++ [(import ./mako.nix)]                      # notification deamon
     # ++ [(import ./micro.nix)]                     # nano replacement
     ++ [(import ./nano.nix)]
     ++ [(import ./noctalia.nix)]
@@ -21,8 +21,9 @@
     ++ [(import ./preactivation.nix)]             # fix gtk rebuild error
     ++ [(./rclone.nix)]
     ++ [(import ./stylix.nix)]
-    ++ [(import ./swaylock.nix)]                  # lock screen
+    # ++ [(import ./swaylock.nix)]                  # lock screen
     ++ [(import ./tmux.nix)]                      #
+    # ++ [(import ./vcv-rack.nix)]
     ++ [(import ./vscodium.nix)]                  # vscode
     ++ [(import ./waybar)]                        # status bar
     ++ [(import ./wofi.nix)]                      # launcher

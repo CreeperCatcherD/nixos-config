@@ -2,7 +2,7 @@
 {
   home.packages = with pkgs; [
     # swww
-    swaybg
+    # swaybg
     inputs.hypr-contrib.packages.${pkgs.stdenv.hostPlatform.system}.grimblast
     hyprpicker
     grim

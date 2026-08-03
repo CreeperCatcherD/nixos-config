@@ -3,12 +3,11 @@
   imports = []
     ++ [(import ./blender.nix)]
     ++ [(import ./docker.nix)]
+    ++ [(import ./deskflow.nix)]
     ++ [(import ./steam.nix)]                       # Steam integration
-    # ++ [(import ./obs-studio.nix)]
     ++ [(import ./openrgb.nix)]           # OpenRGB for lighting control
     ++ [(import ./wireshark.nix)]
     ++ [(import ./flatpak.nix)];
-    # Install jellyfin on desktop
 
   nixpkgs.config = {
     allowUnfree = true;
@@ -17,14 +16,18 @@
   services.udev.packages = with pkgs; [ arduino ];
 
   environment.systemPackages = with pkgs; [
+    # Test
+    atopile
+
     # Desktop apps
     arduino-ide                           # Arduino IDE
     pkgsBundle.pkgs-old.chromium          # Chromium Web Browser
-    # deskflow
     dig
     distrobox
+    easyeffects
     en-croissant
     freecad
+    fretboard
     pkgsBundle.pkgs-stable.gimp
     ghidra
     google-chrome                         # Proprietary Web Browser
@@ -45,12 +48,12 @@
     pavucontrol                           # pulseaudio volume controle (GUI)
     prismlauncher                         # minecraft launcher
     pkgsBundle.pkgs-stable.qalculate-gtk                         # calculator
+    qdirstat
     qpwgraph                              # Audio Routing Software
     # reaper
     remmina                               # RDP Client
     rpi-imager
     pkgsBundle.pkgs-stable.rustdesk
-    vcv-rack
     viewnior                              # Image Viewer
     wdisplays
     winboat
@@ -70,8 +73,6 @@
     cmatrix
     ddcutil                               # Screen brightness
     devenv
-    direnv
-    docker
     dust
     entr                                  # perform action when file change
     entropy

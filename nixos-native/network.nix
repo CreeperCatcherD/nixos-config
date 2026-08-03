@@ -41,9 +41,9 @@
       trustedInterfaces = ["p2p-wl+"];
 
       # For steam network file transfer
-      allowedTCPPorts = ([ 27031 27032 27033 27034 27035 27036 27037 27038 27039 27040
+      allowedTCPPorts = ([ 27031 27032 27033 27034 27035 27036 27037 27038 27039 27040 ]
       # For gnome-network-displays
-      ] ++ [7236 7250]);
+      ++ [7236 7250]);
       allowedTCPPortRanges = [
         { from = 11000; to = 15000; } # ROS2
       ];
@@ -92,7 +92,7 @@
     settings = {
       Resolve = {
         # DNS = "100.100.100.100 192.168.12.101 1.1.1.1 8.8.8.8";
-        DNS = "192.168.12.101 1.1.1.1 8.8.8.8";
+        DNS = "192.168.12.101";
         FallbackDNS = "8.8.8.8 1.1.1.1";
         Domains = "~ts.net ~tailf1460c.ts.net";
         DNSSEC = "false";

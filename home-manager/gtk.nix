@@ -14,6 +14,8 @@
     # pkgs.gnome-themes-standard
   ];
 
+  home.pointerCursor.enable = true;
+
   dconf.enable = lib.mkForce true;
 
   # xdg.configFile = {

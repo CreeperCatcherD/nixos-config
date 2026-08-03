@@ -2,7 +2,7 @@
   programs.steam = {
     enable = true;
     gamescopeSession.enable = false;
-    package = pkgsBundle.pkgs-unstable.steam;
+    # package = pkgsBundle.pkgs-unstable.steam;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
     extraPackages = with pkgs; [
