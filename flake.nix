@@ -32,7 +32,7 @@
 
     # Hyprland Inputs
     hyprland = {
-      url = "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.55.4";
+      url = "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.56.1";
       # url = "github:hyprwm/Hyprland?submodules=1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -43,8 +43,9 @@
         inputs.hyprland.follows = "hyprland";
     };
     split-monitor-workspaces = {
-      url = "git+https://github.com/Duckonaut/split-monitor-workspaces?ref=refs/tags/v0.55.4";
+      url = "git+https://github.com/zjeffer/split-monitor-workspaces?ref=refs/tags/v0.56.1";
       # url = "github:Duckonaut/split-monitor-workspaces";
+      # git@github.com:zjeffer/split-monitor-workspaces.git
       inputs.hyprland.follows = "hyprland";
     };
 

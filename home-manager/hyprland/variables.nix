@@ -29,7 +29,8 @@
     XDG_SESSION_TYPE = "wayland";
     SDL_VIDEODRIVER = "wayland,x11";
     CLUTTER_BACKEND = "wayland";
-    GTK_THEME = "Breeze-Dark";
+    # GTK_THEME intentionally not set here - it overrides gsettings, which
+    # would block Noctalia from switching the GTK theme at runtime.
   };
 
   xdg.mimeApps = {

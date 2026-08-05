@@ -45,6 +45,7 @@
       xdg-desktop-portal-gtk
       # pkgs.xdg-desktop-portal-gnome
     ];
+    config.common.default = "*";
   };
   services.displayManager.defaultSession = "hyprland";
 }

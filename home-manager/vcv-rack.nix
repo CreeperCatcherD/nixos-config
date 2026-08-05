@@ -20,6 +20,12 @@ let
       unzip $src
     '';
 
+    # dontPatch alone only skips applying these - Nix still has to fetch
+    # each one as a build input, and fix-segfault-on-linux.patch is fetched
+    # from a GitHub PR diff URL that now 404s. None of upstream's patches
+    # are relevant anyway since src above is a prebuilt binary, not the
+    # source they patch.
+    patches = [];
     prePatch = "";
     dontPatch = true;
     dontConfigure = true;

@@ -1,4 +1,4 @@
-{ lib, config, pkgs, pkgsBundle, inputs, ... }:
+{ lib, pkgs, pkgsBundle, inputs, ... }:
 
 let
   pkgs-vscode = pkgs.extend (inputs.nix-vscode-extensions.overlays.default);
@@ -64,36 +64,6 @@ in
         # "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font', 'SymbolsNerdFont'";
         "editor.fontSize" = lib.mkForce 16;
         
-        "workbench.colorCustomizations" = {
-            "[Stylix]" = {
-                # "button.background" = "#${config.lib.stylix.colors.base0B}BB";
-                # "button.foreground" = "#${config.lib.stylix.colors.base06}";
-                # "button.secondaryBackground" = "#${config.lib.stylix.colors.base01}BB";
-                # "button.secondaryForeground" = "#${config.lib.stylix.colors.base05}";
-                # "editor.selectionHighlightBackground" = "#${config.lib.stylix.colors.base0E}EE";
-                # "editor.wordHighlightBackground" = "#${config.lib.stylix.colors.base0A}00";
-                # "scrollbarSlider.activeBackground" = "#${config.lib.stylix.colors.base04}55";
-                # "scrollbarSlider.background" = "#${config.lib.stylix.colors.base03}55";
-                # "scrollbarSlider.hoverBackground" = "#${config.lib.stylix.colors.base04}99";
-                # "statusBar.background" = "#${config.lib.stylix.colors.base00}";
-                # "statusBar.noFolderBackground" = "#${config.lib.stylix.colors.base00}";
-                # "statusBar.noFolderForeground" = "#${config.lib.stylix.colors.base06}";
-                # "statusBarItem.remoteBackground" = "#${config.lib.stylix.colors.base0D}";
-
-                # "editorBracketHighlight.foreground1" = "#${config.lib.stylix.colors.base0D}";
-                # "editorBracketHighlight.foreground2" = "#${config.lib.stylix.colors.base0B}";
-                # "editorBracketHighlight.foreground3" = "#${config.lib.stylix.colors.base0E}";
-                # "editorBracketHighlight.foreground4" = "#${config.lib.stylix.colors.base0A}";
-                # "editorBracketHighlight.foreground5" = "#${config.lib.stylix.colors.base0F}";
-                # "editorBracketHighlight.foreground6" = "#${config.lib.stylix.colors.base0C}";
-
-                # "editorError.foreground" = "#${config.lib.stylix.colors.base08}";
-                # "editorWarning.foreground" = "#${config.lib.stylix.colors.base0A}";
-                # "editorError.border" = "#${config.lib.stylix.colors.base08}";
-            };
-        };
-
-
         "glassit.alpha" = 0.1;
 
 
@@ -170,7 +140,8 @@ in
                   "variable.interpolation"
                 ];
                 settings = {
-                  foreground = "#${config.lib.stylix.colors.base09}";
+                  # Static hex (no Noctalia template for vscodium) - matches base09.
+                  foreground = "#717B76";
                 };
               }
               {
@@ -185,7 +156,8 @@ in
                     "punctuation.section.embedded.nix"
                 ];
                 settings = {
-                    foreground = "#${config.lib.stylix.colors.base09}";
+                    # Static hex (no Noctalia template for vscodium) - matches base09.
+                  foreground = "#717B76";
                 };
             }
             ];

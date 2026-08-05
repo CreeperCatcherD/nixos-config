@@ -1,31 +1,25 @@
 {inputs, host, ...}: {
   imports =
-      #  [(import ./audacious/audacious.nix)]       # music player
        [(import ./bat.nix)]                       # better cat command
     ++ [(import ./browser.nix)]                   # browser configs 
     ++ [(import ./btop.nix)]                      # resouces monitor 
     ++ [(import ./cava.nix)]                      # audio visualizer
     ++ [(import ./discord.nix)]                   # discord with catppuccin theme
-    ++ [(import ./fastfetch)]                 # fastfetch config
+    ++ [(import ./fastfetch)]                     # fastfetch config
     ++ [(import ./git.nix)]                       # version control
     ++ [(import ./gtk.nix)]                       # gtk theme
     ++ [(import ./hyprland)]                      # window manager
     ++ [(import ./hypridle.nix)]                  # idle
     ++ [(import ./kitty.nix)]                     # terminal
-    # ++ [(import ./mako.nix)]                      # notification deamon
-    # ++ [(import ./micro.nix)]                     # nano replacement
-    ++ [(import ./nano.nix)]
-    ++ [(import ./noctalia.nix)]
+    ++ [(import ./nano.nix)]                      # nano editor config
+    ++ [(import ./noctalia.nix)]                  # wayland shell/bar + theming
     ++ [(import ./nvim.nix)]                      # neovim editor
     ++ [(import ./packages.nix)]                  # other packages
     ++ [(import ./preactivation.nix)]             # fix gtk rebuild error
-    ++ [(./rclone.nix)]
-    ++ [(import ./stylix.nix)]
-    # ++ [(import ./swaylock.nix)]                  # lock screen
-    ++ [(import ./tmux.nix)]                      #
-    # ++ [(import ./vcv-rack.nix)]
+    ++ [(import ./rclone.nix)]                    # cloud storage sync
+    ++ [(import ./style.nix)]                     # cursor/fonts/qt theming
+    ++ [(import ./tmux.nix)]                      # terminal multiplexer
+    ++ [(import ./vcv-rack.nix)]
     ++ [(import ./vscodium.nix)]                  # vscode
-    ++ [(import ./waybar)]                        # status bar
-    ++ [(import ./wofi.nix)]                      # launcher
     ++ [(import ./zsh.nix)];                      # shell
 }

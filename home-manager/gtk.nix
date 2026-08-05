@@ -4,45 +4,31 @@
   home.packages = [
     pkgs.libsForQt5.qt5ct
     pkgs.qt6Packages.qt6ct
-    pkgs.kdePackages.breeze-gtk
     pkgs.kdePackages.breeze-icons
-    pkgs.kdePackages.breeze.qt5
-    pkgs.kdePackages.breeze
-
-    # For compatability
-    # pkgs.adwaita-icon-theme
-    # pkgs.gnome-themes-standard
+    pkgs.adw-gtk3 # base GTK theme Noctalia switches between light/dark at runtime
   ];
-
-  home.pointerCursor.enable = true;
 
   dconf.enable = lib.mkForce true;
 
-  # xdg.configFile = {
-  #   # 1. Main Kvantum configuration file, pointing to your theme
-  #   "Kvantum/kvantum.kvconfig".text = ''
-  #     [General]
-  #     # The 'theme' option tells Kvantum which theme to load
-  #     theme=${kvantumThemeName}
-  #     # Other general Kvantum settings can go here if needed
-  #     # e.g., animations, translucency settings
-  #   '';
-
-  # };
+  # Baseline only - Noctalia (see home-manager/noctalia.nix) writes this same
+  # key at runtime once it applies a theme, plus gtk-theme (adw-gtk3 /
+  # adw-gtk3-dark) which we deliberately don't declare here so it doesn't
+  # fight Noctalia's dynamic switching. This just avoids a light flash before
+  # Noctalia's first run.
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
+    };
+  };
 
   gtk = {
     enable = true;
     gtk4.theme = lib.mkForce null;
-    
-    iconTheme = lib.mkForce  {
+
+    # Icon theme has no Noctalia template, so it's a static pick here.
+    iconTheme = lib.mkForce {
       name = "Breeze-Dark";
       package = pkgs.kdePackages.breeze-icons;
-    }; 
-
-    theme = lib.mkForce { # Stupid stylix
-        name = "Breeze-Dark";
-        # package = pkgs.libsForQt5.breeze-gtk;
-        package = pkgs.kdePackages.breeze-gtk;
     };
   };
 }

@@ -12,7 +12,10 @@ in
     package = btopWithGpu;
     
     settings = {
-      #color_theme = "dracula";
+      # Pre-seeded so Noctalia's btop apply-hook (which sed-patches this
+      # file at runtime) sees "noctalia" already selected and no-ops
+      # instead of trying to write through the Nix-store symlink.
+      color_theme = "noctalia";
       theme_background = false;
       update_ms = 200;
       # On Auto Off

@@ -45,7 +45,8 @@ rec {
       # prime.offload.enable = true;
       nvidiaSettings = false;
       # package = config.boot.kernelPackages.nvidiaPackages.stable;
-      package = config.boot.kernelPackages.nvidiaPackages.beta;
+      # package = config.boot.kernelPackages.nvidiaPackages.beta;
+      package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
 
       # package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
       #   version = "555.58";

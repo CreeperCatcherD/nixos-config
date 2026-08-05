@@ -1,4 +1,4 @@
-{ lib, pkgs, myOptions, ... }: 
+{ myOptions, ... }:
 {
   security.rtkit.enable = true;
   security.polkit.enable = true; # Enabled by rtkit
@@ -7,10 +7,8 @@
   security.sudo-rs.enable = true;
   security.sudo-rs.execWheelOnly = true;
 
-  # security.pam.services.swaylock = { };
-  security.pam.services.swaylock.text = lib.readFile "${pkgs.swaylock}/etc/pam.d/swaylock";
-
-  security.pam.services.swaylock.fprintAuth = false;
+  # swaylock removed - Noctalia's lock screen authenticates against the
+  # standard "login" PAM service, no custom PAM config needed.
 
   # security.sudo.extraRules = [
   #   {

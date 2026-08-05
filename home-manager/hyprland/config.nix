@@ -66,27 +66,15 @@
         sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
       };
 
-      general = let
-        toHyprlandRGBA = colorHex: alpha: "${(builtins.substring 1 (builtins.stringLength colorHex - 1) colorHex)}${alpha}";
-        in {
+      general = {
         gaps_in = 5;
         gaps_out = 18;
         border_size = 3;
-        
-        # "col.inactive_border" = "rgba(00000000)";
 
-        # Convert hex color to string without '#' and append alpha
-        # Function to clean color string and add alpha
-        
-        # Example: Using base0D (blue) for active, base00 (background) for inactive
-        "col.active_border" = let
-          accentColor1 = config.lib.stylix.colors.base0D;
-          accentColor2 = config.lib.stylix.colors.base0B;
-        in lib.mkForce "rgb(${accentColor1}) rgb(${accentColor2}) rgb(${accentColor1}) 45deg";
-
-        "col.inactive_border" = let
-          inactiveColor = config.lib.stylix.colors.base03; # D # Example: background color
-        in lib.mkForce "rgb(${inactiveColor})";
+        # col.active_border / col.inactive_border are set in extraConfig
+        # below, after Noctalia's generated colors are sourced (they use
+        # Noctalia's $primary/$secondary/$surface variables, which must be
+        # defined before use).
 
         layout = "dwindle";
 
@@ -162,7 +150,6 @@
         "noctalia &"
         # "hyprctl setcursor Nordzy-cursors 22 &"
         "poweralertd &"
-        # "waybar &"
         # "mako &"
         "wl-paste -t text --watch cliphist store &"
         "wl-paste -p -t text --watch cliphist store &"
@@ -171,7 +158,7 @@
 
 
       bind = [
-        "$mainMod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
+        "$mainMod, V, exec, noctalia msg panel-toggle clipboard"
 
         "$mainMod, Return, exec, kitty"
         "$mainMod, Q, killactive,"
@@ -182,13 +169,12 @@
         "$mainMod, E, exec, nemo ~"
         "$mainMod, G, togglefloating,"
         "$mainMod, F, fullscreenstate, 2"
-        "$mainMod SHIFT, D, exec, wofi --show drun"
         "$mainMod, D, exec, noctalia msg panel-toggle launcher"
         "$mainMod SHIFT, P, pseudo, # dwindle"
         "$mainMod, P, pin"
         # "$mainMod, J, togglesplit, # dwindle"
         "$mainMod, T, exec, kitty"
-        "$mainMod, L, exec, swaylock"
+        "$mainMod, L, exec, noctalia msg session lock"
         "$mainMod, S, exec, firefox"
 
         # Cycle through windows
@@ -292,9 +278,10 @@
         # ''$mainMod SHIFT, H, exec, alacritty -e sh -c "codium ~/nix/home-manager/modules/wms/hyprland.nix"''
         # ''$mainMod SHIFT, W, exec, alacritty -e sh -c "codium ~/nix/home-manager/modules/wms/waybar.nix''
 
-        # Waybar
-        "$mainMod, B, exec, pkill -SIGUSR1 waybar"
-        "$mainMod, W, exec, pkill -SIGUSR2 waybar"
+        # Noctalia recovery - not run as a systemd service, so if it
+        # crashes or hangs it needs a manual kick to come back.
+        "$mainMod, B, exec, pkill -x noctalia; sleep 0.3; noctalia &" # graceful restart
+        "$mainMod, W, exec, pkill -9 -x noctalia; sleep 0.3; noctalia &" # force restart if hung
 
         # Disable all effects
         "$mainMod Shift, G, exec, ~/.config/hypr/gamemode.sh "
@@ -331,7 +318,7 @@
 
       bindl = [
         # Screen and sleep hotkeys
-        "$mainMod SHIFT CTRL, O, exec, (swaylock & (sleep 0.01 && systemctl suspend))"
+        "$mainMod SHIFT CTRL, O, exec, noctalia msg session lock-and-suspend"
         # "$mainMod, O, exec,  hyprctl dispatch dpms off"
         # "$mainMod SHIFT, O, exec,  hyprctl dispatch dpms on"
         # "$mainMod, O, exec, ${
@@ -347,6 +334,15 @@
     # Use extraConfig to define the submaps with raw Hyprland syntax
     # This is a string, not a Nix attribute set.
     extraConfig = ''
+      # For Noctalia Color templates - must come before anything using
+      # $primary/$secondary/$surface below.
+      source = ~/.config/hypr/noctalia.conf
+
+      general {
+        col.active_border = $primary $secondary 45deg
+        col.inactive_border = $surface
+      }
+
       submap = vnc
       # Only this keybind works while in the VNC submap.
       # Press Super+V again to exit the submap.
