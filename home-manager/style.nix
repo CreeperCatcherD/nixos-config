@@ -26,6 +26,7 @@ in
     name = "JetBrainsMono Nerd Font";
     size = 10;
   };
+  
 
   home.pointerCursor = {
     enable = true;

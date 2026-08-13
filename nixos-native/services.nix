@@ -9,6 +9,7 @@
     seatd.enable = true;
     printing.enable = true;
     envfs.enable = true;
+    udisks2.enable = true;
   };
   
   environment.systemPackages = with pkgs; [gvfs];

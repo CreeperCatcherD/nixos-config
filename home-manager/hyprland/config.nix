@@ -163,10 +163,11 @@
         "$mainMod, Return, exec, kitty"
         "$mainMod, Q, killactive,"
         # "$mainMod, M, exit,"
-        "$mainMod, A, exec, hyprctl reload"
+        "$mainMod, A, exec, ${pkgs.writeShellScriptBin "hypr-reload-restore-workspaces" (builtins.readFile ../scripts/hypr_reload_restore_workspaces.sh)}/bin/hypr-reload-restore-workspaces"
         "$mainMod, R, exec, obsidian"
         "$mainMod, C, exec, codium"
         "$mainMod, E, exec, nemo ~"
+        "$mainMod, H, exec, hyprpicker -a" # pick a color, copy to clipboard
         "$mainMod, G, togglefloating,"
         "$mainMod, F, fullscreenstate, 2"
         "$mainMod, D, exec, noctalia msg panel-toggle launcher"

@@ -6,6 +6,8 @@
     pkgs.qt6Packages.qt6ct
     pkgs.kdePackages.breeze-icons
     pkgs.adw-gtk3 # base GTK theme Noctalia switches between light/dark at runtime
+    pkgsBundle.pkgs-old.nerdfonts
+    (pkgsBundle.pkgs-old.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
   ];
 
   dconf.enable = lib.mkForce true;

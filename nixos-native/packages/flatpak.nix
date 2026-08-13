@@ -11,6 +11,7 @@
       { appId = "com.bambulab.BambuStudio"; origin = "flathub";  }
       "org.vinegarhq.Sober"
       "com.github.tchx84.Flatseal"
+      "com.usebottles.bottles"
     ];
   };
 
