@@ -5,6 +5,21 @@
     ./../../nixos-native/default.nix
   ];
 
+  # fprintd was previously enabled outside of this repo (its PAM wiring was
+  # already live on the machine with nothing declaring it here). Formalizing
+  # it so it survives a rebuild instead of silently drifting from what's
+  # tracked.
+  services.fprintd.enable = true;
+
+  # By default enabling fprintd inserts `pam_fprintd.so` as the first, and
+  # blocking, entry in every PAM service's auth stack (mkDefault on
+  # fprintAuth). The "login" service is shared by both SDDM and Noctalia's
+  # lock screen (see nixos-native/security.nix), so a stuck/absent finger
+  # scan held up password entry on both sign-in and unlock. Disabling
+  # fprintAuth just for "login" fixes both surfaces at once, while leaving
+  # fingerprint available for anything else (e.g. sudo) that opts in.
+  security.pam.services.login.fprintAuth = false;
+
   services.logind = {
     settings.Login = {
       # Action when the lid is closed, regardless of power state
@@ -19,56 +34,38 @@
     };
   };
 
-  # 1. Disable the USB Host Controllers' wake feature before suspend
-  systemd.services.disable-wake-devices = {
-    description = "Disable USB Host Controller wake before suspend";
-    wantedBy = [ "sleep.target" ];
-    before = [ "sleep.target" ];
+  # Only the power button and the internal keyboard/numpad should be able to
+  # wake this machine from s2idle - this machine has no real S3 (deep) sleep,
+  # so s2idle's much wider IRQ-based wake sources (touchpad, lid, USB
+  # ethernet, thunderbolt, ...) were causing it to wake spontaneously while
+  # jostled in a bag. c4:00.3 is XHC0, the USB controller the internal
+  # keyboard/numpad modules (Framework, idVendor 32ac) hang off of - it has
+  # to stay wake-enabled for USB remote wakeup to propagate up from them.
+  # Everything else with a power/wakeup toggle gets disabled.
+  systemd.services.restrict-wake-sources = {
+    description = "Restrict system wakeup sources to the power button and internal keyboard";
+    wantedBy = [ "multi-user.target" "sleep.target" ];
+    after = [ "suspend.target" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
       ExecStart = ''
-        ${pkgs.writeShellScript "disable-wake-devices-script" ''
-          echo "Disabling wake for XHC (USB Host Controllers)..."
-          # XHC0 (c4:00.3)
-          echo "disabled" > /sys/bus/pci/devices/0000:c4:00.3/power/wakeup 2>/dev/null
-          # XHC1 (c4:00.4)
-          echo "disabled" > /sys/bus/pci/devices/0000:c4:00.4/power/wakeup 2>/dev/null
-          # XHC3 (c6:00.3)
-          echo "disabled" > /sys/bus/pci/devices/0000:c6:00.3/power/wakeup 2>/dev/null
-          # XHC4 (c6:00.4)
-          echo "disabled" > /sys/bus/pci/devices/0000:c6:00.4/power/wakeup 2>/dev/null
-          
-          # Optional: Disable NHI (Thunderbolt) controllers too, if you suspect them
-          # echo "disabled" > /sys/bus/pci/devices/0000:c6:00.5/power/wakeup 2>/dev/null # NHI0
-          # echo "disabled" > /sys/bus/pci/devices/0000:c6:00.6/power/wakeup 2>/dev/null # NHI1
-        ''}
-      '';
-    };
-  };
+        ${pkgs.writeShellScript "restrict-wake-sources-script" ''
+          for f in /sys/bus/*/devices/*/power/wakeup; do
+            dev=$(dirname "$f")
+            name=$(basename "$dev")
+            case "$name" in
+              PNP0C0C:00) continue ;;      # power button
+              0000:c4:00.3) continue ;;    # XHC0 - internal keyboard/numpad's USB controller
+            esac
+            if [ -f "$dev/idVendor" ] && [ "$(cat "$dev/idVendor" 2>/dev/null)" = "32ac" ]; then
+              continue # Framework keyboard/numpad module
+            fi
+            echo "disabled" > "$f" 2>/dev/null
+          done
 
-  # 2. Re-enable the wake feature after resume
-  systemd.services.enable-wake-devices = {
-    description = "Re-enable USB Host Controller wake after resume";
-    wantedBy = [ "sleep.target" ];
-    after = [ "suspend.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = ''
-        ${pkgs.writeShellScript "enable-wake-devices-script" ''
-          echo "Re-enabling wake for XHC (USB Host Controllers)..."
-          # XHC0 (c4:00.3)
+          echo "enabled" > /sys/bus/acpi/devices/PNP0C0C:00/power/wakeup 2>/dev/null
           echo "enabled" > /sys/bus/pci/devices/0000:c4:00.3/power/wakeup 2>/dev/null
-          # XHC1 (c4:00.4)
-          echo "enabled" > /sys/bus/pci/devices/0000:c4:00.4/power/wakeup 2>/dev/null
-          # XHC3 (c6:00.3)
-          echo "enabled" > /sys/bus/pci/devices/0000:c6:00.3/power/wakeup 2>/dev/null
-          # XHC4 (c6:00.4)
-          echo "enabled" > /sys/bus/pci/devices/0000:c6:00.4/power/wakeup 2>/dev/null
-
-          # Optional: Re-enable NHI controllers too, if you disabled them above
-          # echo "enabled" > /sys/bus/pci/devices/0000:c6:00.5/power/wakeup 2>/dev/null # NHI0
-          # echo "enabled" > /sys/bus/pci/devices/0000:c6:00.6/power/wakeup 2>/dev/null # NHI1
         ''}
       '';
     };

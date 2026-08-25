@@ -1,42 +1,53 @@
-{ inputs, config, lib, myOptions, pkgs, ... }: 
+{ inputs, config, lib, myOptions, pkgs, ... }:
+let
+  mkLua = lib.generators.mkLuaInline;
+  toLua = lib.generators.toLua { };
+
+  # A plain `exec` bind: hl.bind(key, hl.dsp.exec_cmd(cmd))
+  execBind = key: cmd: { _args = [ key (mkLua "hl.dsp.exec_cmd(${toLua cmd})") ]; };
+  # A plain `exec` bind with opts (bindl/bindm-style flags).
+  execBindOpts = key: cmd: opts: { _args = [ key (mkLua "hl.dsp.exec_cmd(${toLua cmd})") opts ]; };
+  # A bind whose action is an arbitrary hl.dsp.* expression (raw lua source).
+  dispBind = key: dispExpr: { _args = [ key (mkLua dispExpr) ]; };
+  dispBindOpts = key: dispExpr: opts: { _args = [ key (mkLua dispExpr) opts ]; };
+
+  # Parse the legacy hyprlang monitor rule string ("name, mode, position, scale")
+  # used by myOptions.screens into the table shape hl.monitor() expects.
+  parseMonitor = s:
+    let parts = lib.splitString ", " s;
+    in {
+      output = builtins.elemAt parts 0;
+      mode = builtins.elemAt parts 1;
+      position = builtins.elemAt parts 2;
+      scale = builtins.elemAt parts 3;
+    };
+
+  # Parse the legacy hyprlang "NAME,value" env string into hl.env(name, value) args.
+  parseEnv = s: { _args = lib.splitString "," s; };
+
+  brightnessScript = pkgs.writeShellApplication {
+    name = "hypr-brightness";
+    runtimeInputs = [ pkgs.brightnessctl pkgs.socat ];
+    text = builtins.readFile ../scripts/hypr_brightness.sh;
+  };
+
+  workspaceNumbers = lib.range 1 10;
+  workspaceKey = i: if i == 10 then "0" else toString i;
+
+  # `content` on extraLuaFiles wants either a real Nix `path` value (copies
+  # the file) or the literal text (written verbatim). String-interpolating
+  # a flake input produces a string, which the option treats as literal
+  # text rather than a path to copy - so read the file ourselves instead.
+  smwLua = name: builtins.readFile "${inputs.split-monitor-workspaces}/lua/${name}.lua";
+in
 {
   wayland.windowManager.hyprland = {
-
-    plugins = [ inputs.split-monitor-workspaces.packages.${pkgs.stdenv.hostPlatform.system}.split-monitor-workspaces ];
-
     settings = {
-      "$mainMod" = "SUPER";
+      monitor = map parseMonitor myOptions.screens ++ [
+        { output = ""; mode = "preferred"; position = "auto"; scale = "1"; }
+      ];
 
-      # "plugin:touch_gestures" = {
-      #   # The default sensitivity is probably too low on tablet screens,
-      #   # I recommend turning it up to 4.0
-      #   sensitivity = 1.0;
-
-      #   # must be >= 3
-      #   workspace_swipe_fingers = 3;
-
-      #   # switching workspaces by swiping from an edge, this is separate from workspace_swipe_fingers
-      #   # and can be used at the same time
-      #   # possible values: l, r, u, or d
-      #   # to disable it set it to anything else
-      #   workspace_swipe_edge = "d";
-
-      #   # in milliseconds
-      #   long_press_delay = 400;
-
-      #   # in pixels, the distance from the edge that is considered an edge
-      #   edge_margin = 10;
-
-      #   experimental = {
-      #     # send proper cancel events to windows instead of hacky touch_up events,
-      #     # NOT recommended as it crashed a few times, once it's stabilized I'll make it the default
-      #     send_cancel = 0;
-      #   };
-      # };
-
-      monitor = [] ++ myOptions.screens ++ [ ",preferred,auto,1" ];
-
-      env = [
+      env = map parseEnv [
         "XDG_CURRENT_DESKTOP,Hyprland"
         "XDG_SESSION_TYPE,wayland"
         "XDG_SESSION_DESKTOP,Hyprland"
@@ -45,311 +56,337 @@
         "XDG_SCREENSHOTS_DIR,~/Pictures/Screenshots"
       ];
 
-      debug = {
-        disable_logs = false;
-        enable_stdout_logs = true;
-        # For fractional scaling
-        disable_scale_checks = true;
-      };
+      # split-monitor-workspaces ships a pure-Lua library for the new Lua
+      # config (no more .so plugin / hl.plugin.load) - see the files staged
+      # via extraLuaFiles below. Requiring it here (as a `_var`) makes the
+      # `smw` local available both to the bind list below and to
+      # extraConfig, since the whole generated file is one Lua chunk.
+      smw = { _var = mkLua ''require("smw.split-monitor-workspaces")''; };
 
-      input = {
-        kb_layout = "us";
-        kb_variant = "";
-        kb_options = "";
-
-        follow_mouse = 1;
-
-        touchpad = {
-          natural_scroll = true;
+      config = {
+        debug = {
+          disable_logs = false;
+          enable_stdout_logs = true;
+          # For fractional scaling
+          disable_scale_checks = true;
         };
 
-        sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
-      };
+        input = {
+          kb_layout = "us";
+          kb_variant = "";
+          kb_options = "";
 
-      general = {
-        gaps_in = 5;
-        gaps_out = 18;
-        border_size = 3;
+          follow_mouse = 1;
 
-        # col.active_border / col.inactive_border are set in extraConfig
-        # below, after Noctalia's generated colors are sourced (they use
-        # Noctalia's $primary/$secondary/$surface variables, which must be
-        # defined before use).
+          touchpad = {
+            natural_scroll = true;
+          };
 
-        layout = "dwindle";
+          sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
+        };
 
-        #no_cursor_warps = false;
-      };
+        general = {
+          gaps_in = 5;
+          gaps_out = 18;
+          border_size = 3;
 
-      decoration = {
-        rounding = 10;
+          # col.active_border / col.inactive_border are set at the bottom of
+          # extraConfig, after Noctalia's colors (~/.config/hypr/noctalia.conf)
+          # are parsed - they use Noctalia's primary/secondary/surface colors,
+          # which are only known at runtime and can change without a rebuild.
 
-        blur = {
+          layout = "dwindle";
+        };
+
+        decoration = {
+          rounding = 10;
+
+          blur = {
+            enabled = true;
+            size = 2;
+            passes = 2;
+            new_optimizations = true;
+          };
+        };
+
+        animations = {
           enabled = true;
-          size = 2;
-          passes = 2;
-          new_optimizations = true;
         };
 
-        # drop_shadow = true;
-        # shadow_range = 4;
-        # shadow_render_power = 3;
-        # "col.shadow" = "rgba(1a1a1aee)";
+        dwindle = {
+          # pseudotile is bound to mainMod + P below
+          preserve_split = true; # you probably want this
+        };
+
+        master = {
+          new_status = "master";
+        };
+
+        misc = {
+          animate_manual_resizes = true;
+          animate_mouse_windowdragging = true;
+          enable_swallow = true;
+          disable_hyprland_logo = true;
+          enable_anr_dialog = false;
+        };
       };
 
-      animations = {
-        enabled = true;
-
-        # bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
-        # bezier = "myBezier, 0.33, 0.82, 0.9, -0.08";
-        bezier = "myBezier, 0.1, 0.9, 0.1, 1.1";
-
-        animation = [
-          "windows,     1, 7,  myBezier"
-          "windowsOut,  1, 7,  default, popin 80%"
-          "border,      1, 10, default"
-          "borderangle, 1, 8,  default"
-          "fade,        1, 7,  default"
-          "workspaces,  1, 6,  default"
+      curve = {
+        _args = [
+          "myBezier"
+          {
+            type = "bezier";
+            points = [ [ 0.1 0.9 ] [ 0.1 1.1 ] ];
+          }
         ];
       };
 
-      dwindle = {
-        # pseudotile = true; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
-        preserve_split = true; # you probably want this
+      animation = [
+        { leaf = "windows"; enabled = true; speed = 7; bezier = "myBezier"; }
+        { leaf = "windowsOut"; enabled = true; speed = 7; bezier = "default"; style = "popin 80%"; }
+        { leaf = "border"; enabled = true; speed = 10; bezier = "default"; }
+        { leaf = "borderangle"; enabled = true; speed = 8; bezier = "default"; }
+        { leaf = "fade"; enabled = true; speed = 7; bezier = "default"; }
+        { leaf = "workspaces"; enabled = true; speed = 6; bezier = "default"; }
+      ];
+
+      # autostart - equivalent of hyprlang's exec-once, run once the
+      # compositor has finished starting (systemd activation is handled
+      # separately by the module itself via systemd.enable below).
+      on = {
+        _args = [
+          "hyprland.start"
+          (mkLua (
+            "function()\n"
+            + lib.concatMapStrings (cmd: "  hl.exec_cmd(${toLua cmd})\n") (
+              [
+                "systemctl --user import-environment &"
+                "hash dbus-update-activation-environment 2>/dev/null &"
+                "dbus-update-activation-environment --systemd &"
+                "nm-applet &"
+                "hyprsunset --identity &"
+                "noctalia &"
+                "poweralertd &"
+                "wl-paste -t text --watch cliphist store &"
+                "wl-paste -p -t text --watch cliphist store &"
+                "wl-paste -p --watch xclip -i -selection primary &"
+              ]
+              ++ lib.optional myOptions.enable-rgb-lights "(sleep 6 && openrgb --startminimized) &"
+            )
+            + "end"
+          ))
+        ];
       };
 
-      master = {
-        new_status = "master";
-      };
-      
-      #TODO Fix Gestures
-      # gestures = {
-      #   workspace_swipe = true;
-      #   workspace_swipe_fingers = 3;
-      #   workspace_swipe_invert = false;
-      #   workspace_swipe_distance = 200;
-      #   workspace_swipe_forever = true;
-      # };
+      bind =
+        [
+          (execBind "SUPER + V" "noctalia msg panel-toggle clipboard")
 
-      misc = {
-        animate_manual_resizes = true;
-        animate_mouse_windowdragging = true;
-        enable_swallow = true;
-        # render_ahead_of_time = false;
-        disable_hyprland_logo = true;
-        enable_anr_dialog = false;
-      };
+          (execBind "SUPER + Return" "kitty")
+          (dispBind "SUPER + Q" "hl.dsp.window.close()")
+          (execBind "SUPER + A" "hyprctl reload")
+          (execBind "SUPER + R" "obsidian")
+          (execBind "SUPER + C" "codium")
+          (execBind "SUPER + E" "nemo ~")
+          (execBind "SUPER + H" "hyprpicker -a") # pick a color, copy to clipboard
+          (dispBind "SUPER + G" "hl.dsp.window.float()")
+          (dispBind "SUPER + F" "hl.dsp.window.fullscreen_state({ internal = 2, client = 0, action = \"toggle\" })")
+          (execBind "SUPER + D" "noctalia msg panel-toggle launcher")
+          (dispBind "SUPER + SHIFT + P" "hl.dsp.window.pseudo()") # dwindle
+          (dispBind "SUPER + P" "hl.dsp.window.pin()")
+          (execBind "SUPER + T" "kitty")
+          (execBind "SUPER + L" "noctalia msg session lock")
+          (execBind "SUPER + S" "firefox")
 
-      # autostart
-      exec-once = [
-        "systemctl --user import-environment &"
-        "hash dbus-update-activation-environment 2>/dev/null &"
-        "dbus-update-activation-environment --systemd &"
-        "nm-applet &"
-        "noctalia &"
-        # "hyprctl setcursor Nordzy-cursors 22 &"
-        "poweralertd &"
-        # "mako &"
-        "wl-paste -t text --watch cliphist store &"
-        "wl-paste -p -t text --watch cliphist store &"
-        "wl-paste -p --watch xclip -i -selection primary &"
-      ] ++ (if myOptions.enable-rgb-lights then ["(sleep 6 && openrgb --startminimized) &"] else []);
+          # Cycle through windows
+          (dispBind "ALT + Tab" "hl.dsp.window.bring_to_top()")
+          (dispBind "ALT + Tab" "hl.dsp.window.cycle_next()")
+          (dispBind "ALT + SHIFT + Tab" "hl.dsp.window.cycle_next({ next = false })")
 
+          # Move focus with mainMod + arrow keys
+          (dispBind "SUPER + left" "hl.dsp.focus({ direction = \"left\" })")
+          (dispBind "SUPER + right" "hl.dsp.focus({ direction = \"right\" })")
+          (dispBind "SUPER + up" "hl.dsp.focus({ direction = \"up\" })")
+          (dispBind "SUPER + down" "hl.dsp.focus({ direction = \"down\" })")
 
-      bind = [
-        "$mainMod, V, exec, noctalia msg panel-toggle clipboard"
+          # Moving windows
+          (dispBind "SUPER + SHIFT + left" "hl.dsp.window.swap({ direction = \"left\" })")
+          (dispBind "SUPER + SHIFT + right" "hl.dsp.window.swap({ direction = \"right\" })")
+          (dispBind "SUPER + SHIFT + up" "hl.dsp.window.swap({ direction = \"up\" })")
+          (dispBind "SUPER + SHIFT + down" "hl.dsp.window.swap({ direction = \"down\" })")
 
-        "$mainMod, Return, exec, kitty"
-        "$mainMod, Q, killactive,"
-        # "$mainMod, M, exit,"
-        "$mainMod, A, exec, ${pkgs.writeShellScriptBin "hypr-reload-restore-workspaces" (builtins.readFile ../scripts/hypr_reload_restore_workspaces.sh)}/bin/hypr-reload-restore-workspaces"
-        "$mainMod, R, exec, obsidian"
-        "$mainMod, C, exec, codium"
-        "$mainMod, E, exec, nemo ~"
-        "$mainMod, H, exec, hyprpicker -a" # pick a color, copy to clipboard
-        "$mainMod, G, togglefloating,"
-        "$mainMod, F, fullscreenstate, 2"
-        "$mainMod, D, exec, noctalia msg panel-toggle launcher"
-        "$mainMod SHIFT, P, pseudo, # dwindle"
-        "$mainMod, P, pin"
-        # "$mainMod, J, togglesplit, # dwindle"
-        "$mainMod, T, exec, kitty"
-        "$mainMod, L, exec, noctalia msg session lock"
-        "$mainMod, S, exec, firefox"
+          # Audio clip hotkeys
+          (execBind "SUPER + ALT + 1" ''mpv $(find ~/Music/clips -maxdepth 1 -type f -name "1*") --no-video'')
+          (execBind "SUPER + ALT + 2" ''mpv $(find ~/Music/clips -maxdepth 1 -type f -name "2*") --no-video'')
+          (execBind "SUPER + ALT + 3" ''mpv $(find ~/Music/clips -maxdepth 1 -type f -name "3*") --no-video'')
+          (execBind "SUPER + ALT + 4" ''mpv $(find ~/Music/clips -maxdepth 1 -type f -name "4*") --no-video'')
+          (execBind "SUPER + ALT + 5" ''mpv $(find ~/Music/clips -maxdepth 1 -type f -name "5*") --no-video'')
+          (execBind "SUPER + ALT + 6" ''mpv $(find ~/Music/clips -maxdepth 1 -type f -name "6*") --no-video'')
+          (execBind "SUPER + ALT + 7" ''mpv $(find ~/Music/clips -maxdepth 1 -type f -name "7*") --no-video'')
+          (execBind "SUPER + ALT + 8" ''mpv $(find ~/Music/clips -maxdepth 1 -type f -name "8*") --no-video'')
+          (execBind "SUPER + ALT + 9" ''mpv $(find ~/Music/clips -maxdepth 1 -type f -name "9*") --no-video'')
+          (execBind "SUPER + ALT + 0" "pkill mpv")
 
-        # Cycle through windows
-        "ALT, Tab, bringactivetotop,"
-        "ALT, Tab, cyclenext,"
-        "ALT SHIFT, Tab, cyclenext, prev"
-
-        # Move focus with mainMod + arrow keys
-        "$mainMod, left,  movefocus, l"
-        "$mainMod, right, movefocus, r"
-        "$mainMod, up,    movefocus, u"
-        "$mainMod, down,  movefocus, d"
-
-        # Moving windows
-        "$mainMod SHIFT, left,  swapwindow, l"
-        "$mainMod SHIFT, right, swapwindow, r"
-        "$mainMod SHIFT, up,    swapwindow, u"
-        "$mainMod SHIFT, down,  swapwindow, d"
-
-        # Audio clip hotkeys
-        "$mainMod ALT, 1, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"1*\") --no-video"
-        "$mainMod ALT, 2, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"2*\") --no-video"
-        "$mainMod ALT, 3, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"3*\") --no-video"
-        "$mainMod ALT, 4, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"4*\") --no-video"
-        "$mainMod ALT, 5, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"5*\") --no-video"
-        "$mainMod ALT, 6, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"6*\") --no-video"
-        "$mainMod ALT, 7, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"7*\") --no-video"
-        "$mainMod ALT, 8, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"8*\") --no-video"
-        "$mainMod ALT, 9, exec, mpv $(find ~/Music/clips -maxdepth 1 -type f -name \"9*\") --no-video"
-        "$mainMod ALT, 0, exec, pkill mpv"
-
-        # Window resizing                     X  Y
-        "$mainMod CTRL, left,  resizeactive, -60 0"
-        "$mainMod CTRL, right, resizeactive,  60 0"
-        "$mainMod CTRL, up,    resizeactive,  0 -60"
-        "$mainMod CTRL, down,  resizeactive,  0  60"
-
-        # Switch workspaces with mainMod + [0-9]
-        "$mainMod, 1, split-workspace, 1"
-        "$mainMod, 2, split-workspace, 2"
-        "$mainMod, 3, split-workspace, 3"
-        "$mainMod, 4, split-workspace, 4"
-        "$mainMod, 5, split-workspace, 5"
-        "$mainMod, 6, split-workspace, 6"
-        "$mainMod, 7, split-workspace, 7"
-        "$mainMod, 8, split-workspace, 8"
-        "$mainMod, 9, split-workspace, 9"
-        "$mainMod, 0, split-workspace, 10"
-
+          # Window resizing                                    X    Y
+          (dispBind "SUPER + CTRL + left" "hl.dsp.window.resize({ x = -60, y = 0, relative = true })")
+          (dispBind "SUPER + CTRL + right" "hl.dsp.window.resize({ x = 60, y = 0, relative = true })")
+          (dispBind "SUPER + CTRL + up" "hl.dsp.window.resize({ x = 0, y = -60, relative = true })")
+          (dispBind "SUPER + CTRL + down" "hl.dsp.window.resize({ x = 0, y = 60, relative = true })")
+        ]
+        # Switch workspaces with mainMod + [0-9] (split-monitor-workspaces)
+        ++ (map
+          (i: dispBind "SUPER + ${workspaceKey i}" "smw.workspace(${toLua (toString i)})")
+          workspaceNumbers)
         # Move active window to a workspace with mainMod + SHIFT + [0-9]
-        "$mainMod SHIFT, 1, split-movetoworkspacesilent, 1"
-        "$mainMod SHIFT, 2, split-movetoworkspacesilent, 2"
-        "$mainMod SHIFT, 3, split-movetoworkspacesilent, 3"
-        "$mainMod SHIFT, 4, split-movetoworkspacesilent, 4"
-        "$mainMod SHIFT, 5, split-movetoworkspacesilent, 5"
-        "$mainMod SHIFT, 6, split-movetoworkspacesilent, 6"
-        "$mainMod SHIFT, 7, split-movetoworkspacesilent, 7"
-        "$mainMod SHIFT, 8, split-movetoworkspacesilent, 8"
-        "$mainMod SHIFT, 9, split-movetoworkspacesilent, 9"
-        "$mainMod SHIFT, 0, split-movetoworkspacesilent, 10"
+        ++ (map
+          (i: dispBind "SUPER + SHIFT + ${workspaceKey i}" "smw.move_to_workspace_silent(${toLua (toString i)})")
+          workspaceNumbers)
+        ++ [
+          # Scroll through existing workspaces with mainMod + side buttons
+          (dispBind "SUPER + mouse:276" "hl.dsp.focus({ workspace = \"e+1\" })")
+          (dispBind "SUPER + mouse:275" "hl.dsp.focus({ workspace = \"e-1\" })")
 
-        # Scroll through existing workspaces with mainMod + side buttons
-        # "$mainMod, mouse_down, workspace, e+1"
-        # "$mainMod, mouse_up, workspace, e-1"
-        "$mainMod, mouse:276, workspace, e+1"
-        "$mainMod, mouse:275, workspace, e-1"
-        #"$mainMod SHIFT, mouse:276, workspace, e+5"
-        #"$mainMod SHIFT, mouse:275, workspace, e-5"
+          # Keyboard backlight
+          (execBind "SUPER + F3" "brightnessctl -d *::kbd_backlight set +33%")
+          (execBind "SUPER + F2" "brightnessctl -d *::kbd_backlight set 33%-")
 
-        # Keyboard backlight
-        "$mainMod, F3, exec, brightnessctl -d *::kbd_backlight set +33%"
-        "$mainMod, F2, exec, brightnessctl -d *::kbd_backlight set 33%-"
+          # Volume and Media Control
+          (execBind "XF86AudioRaiseVolume" "pamixer -i 5 ")
+          (execBind "XF86AudioLowerVolume" "pamixer -d 5 ")
+          (execBind "XF86AudioMute" "pamixer -t")
+          (execBind "XF86AudioMicMute" "pamixer --default-source --toggle-mute")
+          (execBind "XF86AudioPlay" "playerctl --all-players play-pause")
+          (execBind "XF86AudioPause" "playerctl --all-players play-pause")
+          (execBind "XF86AudioNext" "playerctl next")
+          (execBind "XF86AudioPrev" "playerctl previous")
+          (execBind "SUPER + ALT + right" "pamixer -t")
+          (execBind "SUPER + ALT + up" "pamixer -i 5")
+          (execBind "SUPER + ALT + down" "pamixer -d 5")
+          (execBind "SUPER + ALT + left" "playerctl --all-players play-pause")
+          (execBind "SUPER + ALT + m" "pamixer --default-source --toggle-mute")
+          (execBind "SUPER + ALT + CTRL + right" "playerctl next")
+          (execBind "SUPER + ALT + CTRL + left" "playerctl previous")
 
-        # Volume and Media Control
-        ", XF86AudioRaiseVolume, exec, pamixer -i 5 "
-        ", XF86AudioLowerVolume, exec, pamixer -d 5 "
-        ", XF86AudioMute, exec, pamixer -t"
-        ", XF86AudioMicMute, exec, pamixer --default-source --toggle-mute"
-        ", XF86AudioPlayPause, exec, playerctl --all-players play-pause"
-        ", XF86AudioPlay, exec, playerctl --all-players play-pause"
-        ", XF86AudioPause, exec, playerctl --all-players play-pause"
-        ", XF86AudioNext, exec, playerctl next"
-        ", XF86AudioPrev, exec, playerctl previous"
-        "$mainMod ALT, right, exec, pamixer -t"
-        "$mainMod ALT, up, exec, pamixer -i 5"
-        "$mainMod ALT, down, exec, pamixer -d 5"
-        "$mainMod ALT, left, exec, playerctl --all-players play-pause"
-        "$mainMod ALT, m, exec, pamixer --default-source --toggle-mute"
-        "$mainMod ALT CTRL, right, exec, playerctl next"
-        "$mainMod ALT CTRL, left, exec, playerctl previous"
-        "$mainMod S, mouse_down, exec, pamixer -i 5"
-        "$mainMod S, mouse_up, exec, pamixer -d 5"
-        
-        # Brightness control
-        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
-        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
+          # Brightness control - once brightnessctl bottoms out at 0% the
+          # panel is still visibly lit, so extra presses dim further via
+          # hyprsunset's gamma control (see ../scripts/hypr_brightness.sh).
+          (execBind "XF86MonBrightnessDown" "${brightnessScript}/bin/hypr-brightness down")
+          (execBind "XF86MonBrightnessUp" "${brightnessScript}/bin/hypr-brightness up")
 
-        # Configuration files
-        # ''$mainMod SHIFT, N, exec, alacritty -e sh -c "rb"''
-        # ''$mainMod SHIFT, C, exec, alacritty -e sh -c "conf"''
-        # ''$mainMod SHIFT, H, exec, alacritty -e sh -c "codium ~/nix/home-manager/modules/wms/hyprland.nix"''
-        # ''$mainMod SHIFT, W, exec, alacritty -e sh -c "codium ~/nix/home-manager/modules/wms/waybar.nix''
+          # Noctalia recovery - not run as a systemd service, so if it
+          # crashes or hangs it needs a manual kick to come back.
+          (execBind "SUPER + B" "pkill -x noctalia; sleep 0.3; noctalia &") # graceful restart
+          (execBind "SUPER + W" "pkill -9 -x noctalia; sleep 0.3; noctalia &") # force restart if hung
 
-        # Noctalia recovery - not run as a systemd service, so if it
-        # crashes or hangs it needs a manual kick to come back.
-        "$mainMod, B, exec, pkill -x noctalia; sleep 0.3; noctalia &" # graceful restart
-        "$mainMod, W, exec, pkill -9 -x noctalia; sleep 0.3; noctalia &" # force restart if hung
+          # Disable all effects
+          (execBind "SUPER + SHIFT + G" "~/.config/hypr/gamemode.sh ")
 
-        # Disable all effects
-        "$mainMod Shift, G, exec, ~/.config/hypr/gamemode.sh "
+          # Screenshots
+          (execBind "Print" ''grim -g "$(slurp)" - | swappy -f -'')
+          (execBind "CTRL + Print" ''grim -g "$(slurp)" - | wl-copy'')
+          (execBind "SHIFT + Print" ''grim -g "$(slurp)" - $(find $HOME -name Pictures -maxdepth 1)/Screenshots/$(date +'%s_grim.png')'')
+          (execBind "SUPER + CTRL + C" ''grim "/home/nixuser/Pictures/Cheat/$(date +'%Y-%m-%d_%H-%M-%S_full.png')"'')
+          (execBind "SUPER + SHIFT + C" ''LATEST_FILE=$(ls -1 /home/nixuser/tmp/laptop/Pictures/Cheat/*.png 2>/dev/null | tail -n 1) && cat "$LATEST_FILE" | wl-copy --type "$(file -b --mime-type "$LATEST_FILE")"'')
+          (execBind "SUPER + SHIFT + CTRL + C" ''(mkdir -p /home/nixuser/Pictures/Cheat && while true; do grim "/home/nixuser/Pictures/Cheat/$(date +'%Y-%m-%d_%H-%M-%S_full.png')"; sleep 30; done) &'')
+          (execBind "SUPER + SHIFT + T" "pkill -f 'grim /home/nixuser/Pictures/Cheat'")
 
-        # Screenshots
-        #, print, exec, $HOME/.config/hypr/scripts/screenshots/captureAll.sh
-        #CTRL, print, exec, $HOME/.config/hypr/scripts/screenshots/captureScreen.sh
-        #CTRL SHIFT, print, exec, $HOME/.config/hypr/scripts/screenshots/captureArea.sh
+          (dispBind "SUPER + SHIFT + V" ''hl.dsp.submap("vnc")'')
 
-        # Screenshots
-        '', Print, exec, grim -g "$(slurp)" - | swappy -f -''
-        ''CTRL, Print, exec, grim -g "$(slurp)" - | wl-copy''
-        ''SHIFT, Print, exec, grim -g "$(slurp)" - $(find $HOME -name Pictures -maxdepth 1)/Screenshots/$(date +'%s_grim.png')''
-        "$mainMod CTRL, C, exec, grim \"/home/nixuser/Pictures/Cheat/$(date +'%Y-%m-%d_%H-%M-%S_full.png')\""
-        "$mainMod SHIFT, C, exec, LATEST_FILE=$(ls -1 /home/nixuser/tmp/laptop/Pictures/Cheat/*.png 2>/dev/null | tail -n 1) && cat \"$LATEST_FILE\" | wl-copy --type \"$(file -b --mime-type \"$LATEST_FILE\")\""
-        "$mainMod SHIFT CTRL, C, exec, (mkdir -p /home/nixuser/Pictures/Cheat && while true; do grim \"/home/nixuser/Pictures/Cheat/$(date +'%Y-%m-%d_%H-%M-%S_full.png')\"; sleep 30; done) &"
-        "$mainMod SHIFT, T, exec, pkill -f 'grim /home/nixuser/Pictures/Cheat'"
-        # ", print, exec, $(find $HOME -name Pictures -maxdepth 1)/Screenshots/$(date +'%s_grim.png')"
-        # "CTRL, print, exec, grim -g \"$(slurp -o)\" $(find $HOME -name Pictures -maxdepth 1)/Screenshots/$(date +'%s_grim.png')"
-        # "CTRL SHIFT, print, exec, grim -g \"$(slurp)\" $(find $HOME -name Pictures -maxdepth 1)/Screenshots/$(date +'%s_grim.png')"
-        # ", print, exec, grim ~/Screenshots/$(date +'%s_grim.png')"
-        # # ", print, exec, kitty"
-        # "CTRL, print, exec, grim -g \"$(slurp -o)\" $(xdg-user-dir Pictures)/Screenshots/$(date +'%s_grim.png')"
-        # "CTRL SHIFT, print, exec, grim -g \"$(slurp)\" $(xdg-user-dir Pictures)/Screenshots/$(date +'%s_grim.png')"
+          # Move/resize windows with mainMod + LMB/RMB and dragging
+          (dispBindOpts "SUPER + mouse:272" "hl.dsp.window.drag()" { mouse = true; })
+          (dispBindOpts "SUPER + mouse:273" "hl.dsp.window.resize()" { mouse = true; })
 
-        "$mainMod SHIFT, V, submap, vnc"
-      ];
-
-      # Move/resize windows with mainMod + LMB/RMB and dragging
-      bindm = [
-        "$mainMod, mouse:272, movewindow"
-        "$mainMod, mouse:273, resizewindow"
-      ];
-
-      bindl = [
-        # Screen and sleep hotkeys
-        "$mainMod SHIFT CTRL, O, exec, noctalia msg session lock-and-suspend"
-        # "$mainMod, O, exec,  hyprctl dispatch dpms off"
-        # "$mainMod SHIFT, O, exec,  hyprctl dispatch dpms on"
-        # "$mainMod, O, exec, ${
-        #   pkgs.writeShellScriptBin "dpms-toggle-ephemeral" (
-        #     # 1. Read the script content from the external file
-        #     builtins.readFile ../scripts/dpms_toggle.sh
-        #   )
-        # }/bin/dpms-toggle-ephemeral"
-        "$mainMod, O, exec,  hyprctl dispatch dpms off"
-        "$mainMod SHIFT, O, exec,  hyprctl dispatch dpms on"
-      ];
+          # Screen and sleep hotkeys
+          (execBindOpts "SUPER + SHIFT + CTRL + O" "noctalia msg session lock-and-suspend" { locked = true; })
+          (execBindOpts "SUPER + Z" "hyprctl eval 'hl.dispatch(hl.dsp.dpms(\"toggle\"))'" { locked = true; })
+        ];
     };
-    # Use extraConfig to define the submaps with raw Hyprland syntax
-    # This is a string, not a Nix attribute set.
+
+    extraLuaFiles = {
+      "smw.globals" = { content = smwLua "globals"; autoLoad = false; };
+      "smw.helpers" = { content = smwLua "helpers"; autoLoad = false; };
+      "smw.monitors" = { content = smwLua "monitors"; autoLoad = false; };
+      "smw.dispatchers" = { content = smwLua "dispatchers"; autoLoad = false; };
+      "smw.split-monitor-workspaces" = { content = smwLua "split-monitor-workspaces"; autoLoad = false; };
+    };
+
+    # Custom Lua that can't be expressed as static `settings` data:
+    #  - split-monitor-workspaces needs a setup() call (a statement, not a
+    #    value/hl.<name>() call)
+    #  - Noctalia's colors (~/.config/hypr/noctalia.conf) are regenerated at
+    #    runtime whenever the user changes theme, and need to be re-read on
+    #    every config reload - there's no Lua equivalent of hyprlang's
+    #    `source = file.conf`, so we parse its `$name = value` lines
+    #    ourselves and feed them into hl.config()/general.col + group
+    #    colors, replicating what noctalia.conf itself used to set via
+    #    `source`, plus our own active_border gradient override.
+    #  - The "vnc" submap, where only Super+Shift+V (submap reset) works.
     extraConfig = ''
-      # For Noctalia Color templates - must come before anything using
-      # $primary/$secondary/$surface below.
-      source = ~/.config/hypr/noctalia.conf
+      smw.setup({ workspace_count = 10 })
 
-      general {
-        col.active_border = $primary $secondary 45deg
-        col.inactive_border = $surface
-      }
+      local function load_noctalia_colors()
+        local colors = {}
+        local path = os.getenv("HOME") .. "/.config/hypr/noctalia.conf"
+        local f = io.open(path, "r")
+        if f then
+          for line in f:lines() do
+            local name, value = line:match("^%$([%w_]+)%s*=%s*(.-)%s*$")
+            if name then
+              colors[name] = value
+            end
+          end
+          f:close()
+        end
+        return colors
+      end
 
-      submap = vnc
-      # Only this keybind works while in the VNC submap.
-      # Press Super+V again to exit the submap.
-      bind = $mainMod SHIFT, V, submap, reset
+      local noctalia = load_noctalia_colors()
 
-      submap = reset
+      if noctalia.primary and noctalia.secondary and noctalia.surface then
+        hl.config({
+          general = {
+            col = {
+              active_border = { colors = { noctalia.primary, noctalia.secondary }, angle = 45 },
+              inactive_border = noctalia.surface,
+            },
+          },
+          group = {
+            col = {
+              border_active = noctalia.secondary,
+              border_inactive = noctalia.surface,
+              border_locked_active = noctalia.error,
+              border_locked_inactive = noctalia.surface,
+            },
+            groupbar = {
+              col = {
+                active = noctalia.secondary,
+                inactive = noctalia.surface,
+                locked_active = noctalia.error,
+                locked_inactive = noctalia.surface,
+              },
+            },
+          },
+        })
+      end
+
+      -- Only this keybind works while in the VNC submap.
+      -- Press Super+Shift+V again to exit the submap.
+      hl.define_submap("vnc", function()
+        hl.bind("SUPER + SHIFT + V", hl.dsp.submap("reset"))
+      end)
+
+      -- sync_fullscreen defaults to true, which forces our internal
+      -- (screen-covering) fullscreen mode to mirror whatever a client asks
+      -- for on its own (e.g. Firefox's F11). Disabling it lets apps hide
+      -- their own chrome via their normal fullscreen request without also
+      -- growing the Hyprland-managed window to cover the whole monitor -
+      -- matching the SUPER+F behavior above, which already keeps those two
+      -- independent in the other direction.
+      hl.window_rule({
+        name = "decouple-client-fullscreen-from-window-size",
+        match = { class = ".*" },
+        sync_fullscreen = false,
+      })
     '';
   };
 }

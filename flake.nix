@@ -95,8 +95,8 @@
         desktop = {
           enable-nvidia-gpu = true;
           enable-rgb-lights = true;
-          hostname = "DESKTOP-GV1U8SC";
           enable-auto-login = true;
+          hostname = "DESKTOP-GV1U8SC";
           screens = [
             # Left Tall
             "DP-3, 1920x1200@60, 0x0, 1"
@@ -113,8 +113,8 @@
           power.mobile = true;
           enable-amd-cpu = true;
           enable-amd-gpu = true;
-          # enable-enterprise-wifi = true;
           enable-auto-login = true;
+          # enable-enterprise-wifi = true;
           screens = [ "eDP-2, 2560x1600@165, 0x0, 1.25"];
           # prefered-gpu.enable = true;
           # prefered-gpu.path = "/dev/dri/by-path/renderD129";
