@@ -9,7 +9,7 @@
       xkb.variant = "";
 
       videoDrivers = if (myOptions.enable-nvidia-gpu == true) then [ "nvidia" ] else []
-      ++ (if (myOptions.enable-nvidia-gpu == true) then [ "amdgpu" ] else []);
+      ++ (if (myOptions.enable-amd-gpu == true) then [ "amdgpu" ] else []);
       deviceSection = ''Option "TearFree" "True"'';
     };
 

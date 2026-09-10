@@ -31,6 +31,18 @@ let
     text = builtins.readFile ../scripts/hypr_brightness.sh;
   };
 
+  dpmsWakeScript = import ../scripts/hypr-dpms-wake.nix { inherit pkgs; };
+
+  fixLowResScript = pkgs.writeShellApplication {
+    name = "hypr-fix-low-res";
+    runtimeInputs = [ pkgs.jq ];
+    # Drop the source file's own shebang line so it doesn't end up stranded
+    # mid-script after writeShellApplication's own header + our export line.
+    text = ''
+      export HYPR_CONFIGURED_MONITORS_JSON=${lib.escapeShellArg (builtins.toJSON (map parseMonitor myOptions.screens))}
+    '' + lib.concatStringsSep "\n" (lib.tail (lib.splitString "\n" (builtins.readFile ../scripts/hypr_fix_low_res.sh)));
+  };
+
   workspaceNumbers = lib.range 1 10;
   workspaceKey = i: if i == 10 then "0" else toString i;
 
@@ -298,7 +310,9 @@ in
 
           # Screen and sleep hotkeys
           (execBindOpts "SUPER + SHIFT + CTRL + O" "noctalia msg session lock-and-suspend" { locked = true; })
-          (execBindOpts "SUPER + Z" "hyprctl eval 'hl.dispatch(hl.dsp.dpms(\"toggle\"))'" { locked = true; })
+          (execBindOpts "SUPER + Z" "${dpmsWakeScript}/bin/hypr-dpms-wake toggle" { locked = true; })
+          (execBindOpts "SUPER + ALT + Z" "${fixLowResScript}/bin/hypr-fix-low-res" { locked = true; })
+          (execBindOpts "SUPER + SHIFT + Z" "openrgb --mode off" { locked = true; })
         ];
     };
 
@@ -321,8 +335,21 @@ in
     #    colors, replicating what noctalia.conf itself used to set via
     #    `source`, plus our own active_border gradient override.
     #  - The "vnc" submap, where only Super+Shift+V (submap reset) works.
+    #  - monitor_priority pins each monitor's workspace-range priority to its
+    #    name (in myOptions.screens' left-to-right order) instead of letting
+    #    split-monitor-workspaces auto-assign by connection order. Without
+    #    this, a monitor that gets disabled/re-enabled (DPMS wake, our
+    #    hypr-fix-low-res script, or the GPU/monitor itself dropping and
+    #    re-establishing the link) gets a new internal monitor ID, which can
+    #    permanently shuffle the auto-assigned order - so workspaces 11-20
+    #    end up on the wrong physical screen even after `hyprctl reload`,
+    #    since reload only re-derives priority from that same shuffled
+    #    order rather than resetting it.
     extraConfig = ''
-      smw.setup({ workspace_count = 10 })
+      smw.setup({
+        workspace_count = 10,
+        monitor_priority = ${toLua (map (m: m.output) (map parseMonitor myOptions.screens))},
+      })
 
       local function load_noctalia_colors()
         local colors = {}

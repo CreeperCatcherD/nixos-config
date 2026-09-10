@@ -14,5 +14,5 @@
 
   services.pia.enable = true;
   # services.pia.authUserPass.username = "p6882563";
-  services.pia.authUserPassFile = /home/nixuser/.config/piafile/piapasswd.txt;
+  services.pia.authUserPassFile = "/home/nixuser/.config/piafile/piapasswd.txt";
 }

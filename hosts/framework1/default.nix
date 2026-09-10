@@ -64,7 +64,9 @@
             echo "disabled" > "$f" 2>/dev/null
           done
 
-          echo "enabled" > /sys/bus/acpi/devices/PNP0C0C:00/power/wakeup 2>/dev/null
+          for f in /sys/bus/*/devices/PNP0C0C:00/power/wakeup; do
+            echo "enabled" > "$f" 2>/dev/null
+          done
           echo "enabled" > /sys/bus/pci/devices/0000:c4:00.3/power/wakeup 2>/dev/null
         ''}
       '';

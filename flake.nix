@@ -97,11 +97,12 @@
           enable-rgb-lights = true;
           enable-auto-login = true;
           hostname = "DESKTOP-GV1U8SC";
+          power.idle-dim = 300;
           screens = [
             # Left Tall
             "DP-3, 1920x1200@60, 0x0, 1"
             # Middle
-            "DP-2, 1920x1080@160, 1920x120, 1"
+            "DP-2, 1920x1080@144, 1920x120, 1"
             # Right Tall
             "DP-1, 1920x1200@60, 3840x0, 1"
             # TV
@@ -111,6 +112,9 @@
         framework1 = {
           hostname = "LAPTOP-PDQ3S7";
           power.mobile = true;
+          power.idle-dim = 300;
+          # power.idle-lock = 65;
+          # power.idle-sleep = 70;
           enable-amd-cpu = true;
           enable-amd-gpu = true;
           enable-auto-login = true;
@@ -162,6 +166,9 @@
           };
           power = {
             mobile = false;
+            idle-lock = 0;
+            idle-dim = 0;
+            idle-sleep = 0;
           };
         };
       };

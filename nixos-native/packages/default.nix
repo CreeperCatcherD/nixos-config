@@ -19,6 +19,10 @@
     # Test
     atopile                               # Design circuit boards with code
     gsettings-desktop-schemas             # GSettings schemas for desktop components
+    # Bitwarden test
+    bws
+    bitwarden-desktop
+    bitwarden-cli
 
     # Desktop apps
     arduino-ide                           # Arduino IDE

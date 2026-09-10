@@ -32,6 +32,11 @@
     };
   };
 
+  # To hopefully fix noctalia:
+  #services.power-profiles-daemon.enable = myOptions.power.mobile;
+  #services.tlp.enable = false;
+
+  # Disable all this to fix noctalia
   services.power-profiles-daemon.enable = false;
   services.tlp = if myOptions.power.mobile then {
     enable = true;
